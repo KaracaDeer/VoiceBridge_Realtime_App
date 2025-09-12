@@ -15,7 +15,7 @@ It combines deep learning, distributed systems, and big data technologies to del
 
 ## 🎯 Demo
 
-<img src="docs/images/demo.gif" alt="VoiceBridge Demo" width="600" height="400">
+<img src="docs/images/demo.gif" alt="VoiceBridge Demo" width="800" height="450">
 
 ## ✨ Features
 
