@@ -13,31 +13,32 @@ Derin öğrenme, dağıtık sistemler ve büyük veri teknolojilerini birleştir
 
 🇺🇸 [English README](README.md)
 
-🎯 Demo
+## 🎯 Demo
 
-![VoiceBridge Demo](docs/images/demo.gif)
+<img src="docs/images/demo.gif" alt="VoiceBridge Demo" width="600" height="400">
 
-✨ Özellikler
-🎤 Gerçek Zamanlı Ses İşleme - Gelişmiş konuşma tanıma ve transkripsiyon
-🤖 AI Destekli Transkripsiyon - Whisper, Wav2Vec2 ve OpenAI dahil çoklu ML modelleri
-🧠 Derin Öğrenme Entegrasyonu - TensorFlow ve PyTorch model desteği
-📊 Makine Öğrenmesi Pipeline - scikit-learn, NumPy ve Pandas entegrasyonu
-🔄 Gerçek Zamanlı Streaming - WebSocket tabanlı canlı ses akışı
-📱 Responsive Tasarım - Tüm cihazlarda çalışan modern, minimalist arayüz
-🚀 Mikroservis Mimarisi - Ölçeklenebilir dağıtık sistem tasarımı
-📚 ML Model Yönetimi - Model takibi ve dağıtımı için MLflow entegrasyonu
-🔬 Deney Takibi - ML deneylerini görselleştirme için Weights & Biases
-🔐 Kullanıcı Kimlik Doğrulama - Güvenli kullanıcı yönetimi ve oturum takibi
-🔑 JWT Kimlik Doğrulama - Güvenli token tabanlı kimlik doğrulama sistemi
-🌐 OAuth 2.0 Entegrasyonu - Google, GitHub ve Microsoft ile sosyal giriş
-📊 Gerçek Zamanlı İzleme - Prometheus metrikleri ve Grafana panelleri
-🔄 Mesaj Kuyrukları - Yüksek performanslı mesajlaşma için Kafka ve Redis
-🔍 Gelişmiş Analitik - Spark tabanlı veri işleme ve analitik
-🛡️ Güvenlik Özellikleri - AES-256 şifreleme, hız sınırlama ve güvenli depolama
-⚡ Görev İşleme - Arka plan iş işleme için Celery worker'ları
-🌐 gRPC Servisleri - Yüksek performanslı servisler arası iletişim
-📈 Performans İzleme - Gerçek zamanlı sistem metrikleri ve sağlık kontrolleri
-🔧 CI/CD Pipeline - Otomatik test, linting ve dağıtım
+## ✨ Özellikler
+
+- 🎤 **Gerçek Zamanlı Ses İşleme** - Gelişmiş konuşma tanıma ve transkripsiyon
+- 🤖 **AI Destekli Transkripsiyon** - Whisper, Wav2Vec2 ve OpenAI dahil çoklu ML modelleri
+- 🧠 **Derin Öğrenme Entegrasyonu** - TensorFlow ve PyTorch model desteği
+- 📊 **Makine Öğrenmesi Pipeline** - scikit-learn, NumPy ve Pandas entegrasyonu
+- 🔄 **Gerçek Zamanlı Streaming** - WebSocket tabanlı canlı ses akışı
+- 📱 **Responsive Tasarım** - Tüm cihazlarda çalışan modern, minimalist arayüz
+- 🚀 **Mikroservis Mimarisi** - Ölçeklenebilir dağıtık sistem tasarımı
+- 📚 **ML Model Yönetimi** - Model takibi ve dağıtımı için MLflow entegrasyonu
+- 🔬 **Deney Takibi** - ML deneylerini görselleştirme için Weights & Biases
+- 🔐 **Kullanıcı Kimlik Doğrulama** - Güvenli kullanıcı yönetimi ve oturum takibi
+- 🔑 **JWT Kimlik Doğrulama** - Güvenli token tabanlı kimlik doğrulama sistemi
+- 🌐 **OAuth 2.0 Entegrasyonu** - Google, GitHub ve Microsoft ile sosyal giriş
+- 📊 **Gerçek Zamanlı İzleme** - Prometheus metrikleri ve Grafana panelleri
+- 🔄 **Mesaj Kuyrukları** - Yüksek performanslı mesajlaşma için Kafka ve Redis
+- 🔍 **Gelişmiş Analitik** - Spark tabanlı veri işleme ve analitik
+- 🛡️ **Güvenlik Özellikleri** - AES-256 şifreleme, hız sınırlama ve güvenli depolama
+- ⚡ **Görev İşleme** - Arka plan iş işleme için Celery worker'ları
+- 🌐 **gRPC Servisleri** - Yüksek performanslı servisler arası iletişim
+- 📈 **Performans İzleme** - Gerçek zamanlı sistem metrikleri ve sağlık kontrolleri
+- 🔧 **CI/CD Pipeline** - Otomatik test, linting ve dağıtım
 
 ## 🔍 Detaylı Özellikler
 
@@ -139,7 +140,8 @@ VoiceBridge_Realtime_App/
 ├── 📄 README.md, README_TR.md   # Proje dokümantasyonu
 ├── 📄 LICENSE, SECURITY.md      # Yasal ve güvenlik bilgileri
 ├── 📄 requirements.txt          # Python bağımlılıkları
-├── 📄 docker-compose*.yml       # Docker konfigürasyonları
+├── 📄 package.json              # Node.js bağımlılıkları
+├── 📄 main.py                   # Ana uygulama giriş noktası
 │
 ├── 📁 src/                      # Kaynak kod
 │   ├── database/                # Veritabanı modelleri ve servisleri
@@ -152,17 +154,35 @@ VoiceBridge_Realtime_App/
 ├── 📁 frontend/                 # React uygulaması
 │   ├── src/                     # React kaynak kodu
 │   ├── public/                  # Statik varlıklar
-│   └── package.json             # Node.js bağımlılıkları
+│   └── package.json             # Frontend bağımlılıkları
+│
+├── 📁 examples/                 # Örnek uygulamalar
+│   ├── simple_main.py          # Temel örnek
+│   ├── simple_main_ml.py       # ML örneği
+│   └── test_setup.py           # Kurulum testi
+│
+├── 📁 storage/                  # Depolama uygulamaları
+│   ├── cloud/                  # Bulut depolama simülatörleri
+│   ├── hdfs/                   # HDFS depolama
+│   ├── s3/                     # S3 depolama
+│   ├── gcs_storage/            # Google Cloud Storage
+│   └── secure/                 # Güvenli depolama
+│
+├── 📁 deployment/               # Dağıtım konfigürasyonları
+│   ├── docker/                 # Docker konfigürasyonları
+│   ├── kubernetes/             # K8s konfigürasyonları
+│   └── docker-compose*.yml     # Docker Compose dosyaları
+│
+├── 📁 scripts/                  # Yardımcı scriptler
+│   ├── setup_*.py              # Kurulum scriptleri
+│   ├── start-*.bat/.sh         # Başlatma scriptleri
+│   ├── health_check.bat        # Sağlık izleme
+│   └── README.md               # Script dokümantasyonu
 │
 ├── 📁 tests/                    # Test paketi (pytest)
 │   ├── test_api.py             # API testleri
 │   ├── test_security.py        # Güvenlik testleri
 │   └── README.md               # Test dokümantasyonu
-│
-├── 📁 scripts/                  # Yardımcı scriptler
-│   ├── setup_ci.py             # CI/CD kurulumu
-│   ├── health_check.bat        # Sağlık izleme
-│   └── README.md               # Script dokümantasyonu
 │
 ├── 📁 monitoring/               # İzleme konfigürasyonları
 │   ├── prometheus/             # Prometheus konfigürasyonları
@@ -174,11 +194,12 @@ VoiceBridge_Realtime_App/
 │   └── README.md               # Protobuf kılavuzu
 │
 ├── 📁 docs/                     # Dokümantasyon
+│   ├── images/                 # Dokümantasyon görselleri
 │   └── monitoring/             # Büyük dashboard dosyaları
 │
 ├── 📁 data/example/             # Örnek veriler (git için güvenli)
-├── 📁 secure_storage/example/   # Örnek konfigürasyonlar (git için güvenli)
-└── 📁 postman/                  # API test koleksiyonları
+├── 📁 postman/                  # API test koleksiyonları
+└── 📁 analytics/                # Analitik ve simülasyon
 ```
 
 ## 🚀 Hızlı Başlangıç

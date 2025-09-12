@@ -13,31 +13,32 @@ It combines deep learning, distributed systems, and big data technologies to del
 
 🇹🇷 [Turkish README](README_TR.md)
 
-🎯 Demo
+## 🎯 Demo
 
-![VoiceBridge Demo](docs/images/demo.gif)
+<img src="docs/images/demo.gif" alt="VoiceBridge Demo" width="600" height="400">
 
-✨ Features
-🎤 Real-time Voice Processing - Advanced speech recognition and transcription
-🤖 AI-Powered Transcription - Multiple ML models including Whisper, Wav2Vec2, and OpenAI
-🧠 Deep Learning Integration - TensorFlow and PyTorch model support
-📊 Machine Learning Pipeline - scikit-learn, NumPy, and Pandas integration
-🔄 Real-time Streaming - WebSocket-based live audio streaming
-📱 Responsive Design - Modern, minimalist interface that works on all devices
-🚀 Microservices Architecture - Scalable distributed system design
-📚 ML Model Management - MLflow integration for model tracking and deployment
-🔬 Experiment Tracking - Weights & Biases for ML experiment visualization
-🔐 User Authentication - Secure user management and session tracking
-🔑 JWT Authentication - Secure token-based authentication system
-🌐 OAuth 2.0 Integration - Social login with Google, GitHub, and Microsoft
-📊 Real-time Monitoring - Prometheus metrics and Grafana dashboards
-🔄 Message Queues - Kafka and Redis for high-performance messaging
-🔍 Advanced Analytics - Spark-based data processing and analytics
-🛡️ Security Features - AES-256 encryption, rate limiting, and secure storage
-⚡ Task Processing - Celery workers for background job processing
-🌐 gRPC Services - High-performance inter-service communication
-📈 Performance Monitoring - Real-time system metrics and health checks
-🔧 CI/CD Pipeline - Automated testing, linting, and deployment
+## ✨ Features
+
+- 🎤 **Real-time Voice Processing** - Advanced speech recognition and transcription
+- 🤖 **AI-Powered Transcription** - Multiple ML models including Whisper, Wav2Vec2, and OpenAI
+- 🧠 **Deep Learning Integration** - TensorFlow and PyTorch model support
+- 📊 **Machine Learning Pipeline** - scikit-learn, NumPy, and Pandas integration
+- 🔄 **Real-time Streaming** - WebSocket-based live audio streaming
+- 📱 **Responsive Design** - Modern, minimalist interface that works on all devices
+- 🚀 **Microservices Architecture** - Scalable distributed system design
+- 📚 **ML Model Management** - MLflow integration for model tracking and deployment
+- 🔬 **Experiment Tracking** - Weights & Biases for ML experiment visualization
+- 🔐 **User Authentication** - Secure user management and session tracking
+- 🔑 **JWT Authentication** - Secure token-based authentication system
+- 🌐 **OAuth 2.0 Integration** - Social login with Google, GitHub, and Microsoft
+- 📊 **Real-time Monitoring** - Prometheus metrics and Grafana dashboards
+- 🔄 **Message Queues** - Kafka and Redis for high-performance messaging
+- 🔍 **Advanced Analytics** - Spark-based data processing and analytics
+- 🛡️ **Security Features** - AES-256 encryption, rate limiting, and secure storage
+- ⚡ **Task Processing** - Celery workers for background job processing
+- 🌐 **gRPC Services** - High-performance inter-service communication
+- 📈 **Performance Monitoring** - Real-time system metrics and health checks
+- 🔧 **CI/CD Pipeline** - Automated testing, linting, and deployment
 
 ## 🔍 Detailed Features
 
@@ -139,7 +140,8 @@ VoiceBridge_Realtime_App/
 ├── 📄 README.md, README_TR.md   # Project documentation
 ├── 📄 LICENSE, SECURITY.md      # Legal and security info
 ├── 📄 requirements.txt          # Python dependencies
-├── 📄 docker-compose*.yml       # Docker configurations
+├── 📄 package.json              # Node.js dependencies
+├── 📄 main.py                   # Main application entry point
 │
 ├── 📁 src/                      # Source code
 │   ├── database/                # Database models and services
@@ -152,17 +154,35 @@ VoiceBridge_Realtime_App/
 ├── 📁 frontend/                 # React application
 │   ├── src/                     # React source code
 │   ├── public/                  # Static assets
-│   └── package.json             # Node.js dependencies
+│   └── package.json             # Frontend dependencies
+│
+├── 📁 examples/                 # Example applications
+│   ├── simple_main.py          # Basic example
+│   ├── simple_main_ml.py       # ML example
+│   └── test_setup.py           # Setup test
+│
+├── 📁 storage/                  # Storage implementations
+│   ├── cloud/                  # Cloud storage simulators
+│   ├── hdfs/                   # HDFS storage
+│   ├── s3/                     # S3 storage
+│   ├── gcs_storage/            # Google Cloud Storage
+│   └── secure/                 # Secure storage
+│
+├── 📁 deployment/               # Deployment configurations
+│   ├── docker/                 # Docker configurations
+│   ├── kubernetes/             # K8s configurations
+│   └── docker-compose*.yml     # Docker Compose files
+│
+├── 📁 scripts/                  # Utility scripts
+│   ├── setup_*.py              # Setup scripts
+│   ├── start-*.bat/.sh         # Startup scripts
+│   ├── health_check.bat        # Health monitoring
+│   └── README.md               # Script documentation
 │
 ├── 📁 tests/                    # Test suite (pytest)
 │   ├── test_api.py             # API tests
 │   ├── test_security.py        # Security tests
 │   └── README.md               # Test documentation
-│
-├── 📁 scripts/                  # Utility scripts
-│   ├── setup_ci.py             # CI/CD setup
-│   ├── health_check.bat        # Health monitoring
-│   └── README.md               # Script documentation
 │
 ├── 📁 monitoring/               # Monitoring configs
 │   ├── prometheus/             # Prometheus configs
@@ -174,11 +194,12 @@ VoiceBridge_Realtime_App/
 │   └── README.md               # Protobuf guide
 │
 ├── 📁 docs/                     # Documentation
+│   ├── images/                 # Documentation images
 │   └── monitoring/             # Large dashboard files
 │
 ├── 📁 data/example/             # Sample data (safe for git)
-├── 📁 secure_storage/example/   # Sample configs (safe for git)
-└── 📁 postman/                  # API test collections
+├── 📁 postman/                  # API test collections
+└── 📁 analytics/                # Analytics and simulation
 ```
 
 ## 🚀 Quick Start
