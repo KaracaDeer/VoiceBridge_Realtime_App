@@ -56,7 +56,6 @@ class WebSpeechService {
         const confidence = event.results[i][0].confidence || 0.9;
 
         if (event.results[i].isFinal) {
-          finalTranscript += transcript + ' ';
           console.log('✅ Final transcript:', transcript, `(confidence: ${confidence.toFixed(2)})`);
           
           if (this.onResult) {
@@ -69,7 +68,6 @@ class WebSpeechService {
             });
           }
         } else {
-          interimTranscript += transcript;
           console.log('⏳ Interim transcript:', transcript);
           
           if (this.onResult) {

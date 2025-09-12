@@ -278,7 +278,8 @@ class VoiceBridgeDataService:
                     )
 
                     self.mongodb_manager.db.conversations.update_one(
-                        {"_id": ObjectId(conversation_id)}, {"$set": updated_conversation}
+                        {"_id": ObjectId(conversation_id)},
+                        {"$set": updated_conversation},
                     )
                 else:
                     logger.error(f"Conversation not found: {conversation_id}")
@@ -366,7 +367,9 @@ class VoiceBridgeDataService:
         try:
             if self.mongodb_manager.db is not None:
                 self.mongodb_manager.db.analytics.update_one(
-                    {"_id": analytics_data["_id"]}, {"$set": analytics_data}, upsert=True
+                    {"_id": analytics_data["_id"]},
+                    {"$set": analytics_data},
+                    upsert=True,
                 )
             else:
                 logger.error("MongoDB database not available")

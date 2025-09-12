@@ -143,7 +143,7 @@ export const WebSocketProvider = ({ children }) => {
     return () => {
       disconnect();
     };
-  }, []);
+  }, [connect, disconnect]);
 
   const value = {
     socket,

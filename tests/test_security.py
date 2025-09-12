@@ -41,7 +41,9 @@ class TestSecurity:
         with patch.object(auth_service, "create_user") as mock_create:
             mock_create.return_value = {"id": 1, "username": "testuser"}
             result = auth_service.create_user(
-                username=test_user["username"], email=test_user["email"], password=test_user["password"]
+                username=test_user["username"],
+                email=test_user["email"],
+                password=test_user["password"],
             )
 
             assert result["username"] == "testuser"

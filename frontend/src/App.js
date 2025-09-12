@@ -13,58 +13,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster, toast } from 'react-hot-toast';
-import { X, Volume2, Copy, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useWebSocket, WebSocketProvider } from './context/WebSocketContext';
 import WebSpeechService from './services/webSpeechService';
 import './App.css';
 
-// Function to convert AudioBuffer to WAV Blob for backend processing
-function audioBufferToWav(buffer) {
-  const length = buffer.length;
-  const numberOfChannels = buffer.numberOfChannels;
-  const sampleRate = buffer.sampleRate;
-  const bytesPerSample = 2; // 16-bit
-  const blockAlign = numberOfChannels * bytesPerSample;
-  const byteRate = sampleRate * blockAlign;
-  const dataSize = length * blockAlign;
-  const bufferSize = 44 + dataSize;
-  
-  const arrayBuffer = new ArrayBuffer(bufferSize);
-  const view = new DataView(arrayBuffer);
-  
-  // WAV header
-  const writeString = (offset, string) => {
-    for (let i = 0; i < string.length; i++) {
-      view.setUint8(offset + i, string.charCodeAt(i));
-    }
-  };
-  
-  writeString(0, 'RIFF');
-  view.setUint32(4, bufferSize - 8, true);
-  writeString(8, 'WAVE');
-  writeString(12, 'fmt ');
-  view.setUint32(16, 16, true); // PCM format
-  view.setUint16(20, 1, true); // Linear PCM
-  view.setUint16(22, numberOfChannels, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, byteRate, true);
-  view.setUint16(32, blockAlign, true);
-  view.setUint16(34, 16, true); // 16-bit
-  writeString(36, 'data');
-  view.setUint32(40, dataSize, true);
-  
-  // Convert float samples to 16-bit PCM
-  let offset = 44;
-  for (let i = 0; i < length; i++) {
-    for (let channel = 0; channel < numberOfChannels; channel++) {
-      const sample = Math.max(-1, Math.min(1, buffer.getChannelData(channel)[i]));
-      view.setInt16(offset, sample * 0x7FFF, true);
-      offset += 2;
-    }
-  }
-  
-  return new Blob([arrayBuffer], { type: 'audio/wav' });
-}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -78,10 +31,6 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
-};
 
 // Audio Waveform Component - Visual representation of audio input levels
 const AudioWaveform = ({ audioLevel, isRecording }) => {
@@ -124,14 +73,11 @@ function AppContent() {
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [transcriptions, setTranscriptions] = useState([]);
-  const [recordingTime, setRecordingTime] = useState(0);
   const [timerInterval, setTimerInterval] = useState(null);
   
   // Audio processing and visualization
   const [audioLevel, setAudioLevel] = useState(0);
   const [audioContext, setAudioContext] = useState(null);
-  const [analyser, setAnalyser] = useState(null);
-  const [microphoneStream, setMicrophoneStream] = useState(null);
   
   // UI state management
   const [currentPage, setCurrentPage] = useState('welcome'); // 'welcome' or 'recording'
@@ -197,7 +143,7 @@ function AppContent() {
 
     // Auto-connect to WebSocket as fallback
     connect();
-  }, []); // Empty dependency array to run only once
+  }, [connect]); // Include connect in dependencies
 
   // Auto-scroll to bottom when new messages are added
   useEffect(() => {
@@ -247,7 +193,7 @@ function AppContent() {
       }
       
       const newInterval = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
+        // Timer logic can be added here if needed
       }, 1000);
       setTimerInterval(newInterval);
     } else {
@@ -255,7 +201,7 @@ function AppContent() {
         clearInterval(timerInterval);
         setTimerInterval(null);
       }
-      setRecordingTime(0);
+      // Reset timer if needed
     }
     
     // Cleanup function
@@ -264,7 +210,7 @@ function AppContent() {
         clearInterval(timerInterval);
       }
     };
-  }, [isRecording]); // Remove timerInterval from dependencies
+  }, [isRecording, timerInterval]); // Include timerInterval in dependencies
 
   const startRecording = async () => {
     // Switch to recording page
@@ -385,10 +331,6 @@ function AppContent() {
   };
 
   const handleCloseChat = () => {
-    // Don't clear transcriptions - keep them visible
-    // setTranscriptions([]);
-    // Don't clear currentTranscription - keep it visible
-    // setCurrentTranscription('');
     setIsRecording(false);
     
     // Stop Web Speech if active
