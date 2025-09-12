@@ -1,0 +1,67 @@
+{
+  "name": "voicebridge",
+  "version": "1.0.0",
+  "description": "VoiceBridge - Real-time Speech-to-Text API for Hearing-Impaired Individuals",
+  "private": true,
+  "author": "Fatma Karaca Erdogan (KaracaDeer)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KaracaDeer/voicebridge.git"
+  },
+  "keywords": [
+    "speech-to-text",
+    "real-time",
+    "fastapi",
+    "react",
+    "hearing-impaired",
+    "accessibility",
+    "ai",
+    "ml"
+  ],
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.5.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "framer-motion": "^10.16.16",
+    "lucide-react": "^0.294.0",
+    "react-hot-toast": "^2.4.1",
+    "web-vitals": "^2.1.4",
+    "concurrently": "^8.2.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "backend": "python main.py",
+    "dev": "concurrently \"npm run backend\" \"npm start\"",
+    "install-backend": "pip install -r requirements.txt",
+    "test-backend": "python -m pytest tests/",
+    "docker-up": "docker-compose -f docker/docker-compose.yml up -d",
+    "docker-down": "docker-compose -f docker/docker-compose.yml down",
+    "docker-prod": "docker-compose -f docker-compose.production.yml up -d"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:8000"
+}

@@ -1,0 +1,229 @@
+"""
+ML Models Test Script
+Script to test Wav2Vec2 and preprocessing services
+"""
+import asyncio
+import io
+import logging
+
+import numpy as np
+import soundfile as sf
+
+from src.services.audio_preprocessing_service import get_preprocessing_service
+from src.services.wav2vec_service import get_wav2vec_service
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def create_test_audio(
+    duration: float = 3.0, sample_rate: int = 16000, frequency: float = 440.0
+) -> bytes:
+    """
+    Create simple audio data for testing
+
+    Args:
+        duration: Audio duration (seconds)
+        sample_rate: Sample rate
+        frequency: Frequency (Hz)
+
+    Returns:
+        Audio data bytes
+    """
+    # Create sine wave
+    t = np.linspace(0, duration, int(sample_rate * duration), False)
+    audio_data = np.sin(2 * np.pi * frequency * t)
+
+    # Normalize
+    audio_data = audio_data / np.max(np.abs(audio_data))
+
+    # Convert to bytes
+    buffer = io.BytesIO()
+    sf.write(buffer, audio_data, sample_rate, format="WAV")
+    return buffer.getvalue()
+
+
+def create_speech_like_audio(duration: float = 2.0, sample_rate: int = 16000) -> bytes:
+    """
+    Create speech-like test audio (white noise + modulation)
+    """
+    # White noise
+    noise = np.random.normal(0, 0.1, int(sample_rate * duration))
+
+    # Low frequency sine for modulation
+    t = np.linspace(0, duration, int(sample_rate * duration), False)
+    modulation = 0.5 * np.sin(2 * np.pi * 5 * t) + 0.5  # 5 Hz modulation
+
+    # Modulate noise
+    audio_data = noise * modulation
+
+    # Normalize
+    audio_data = audio_data / np.max(np.abs(audio_data))
+
+    # Convert to bytes
+    buffer = io.BytesIO()
+    sf.write(buffer, audio_data, sample_rate, format="WAV")
+    return buffer.getvalue()
+
+
+async def test_wav2vec_service():
+    """Test Wav2Vec2 service"""
+    logger.info("Testing Wav2Vec2 Service...")
+
+    try:
+        # Get service
+        wav2vec_service = get_wav2vec_service()
+
+        # Print service information
+        service_info = wav2vec_service.get_service_info()
+        logger.info(f"Service Info: {service_info}")
+
+        # Create test audio
+        test_audio = create_speech_like_audio(duration=2.0)
+        logger.info(f"Created test audio: {len(test_audio)} bytes")
+
+        # Test transcription
+        result = wav2vec_service.transcribe_audio_bytes(test_audio, language="en")
+
+        logger.info(f"Transcription Result: {result}")
+
+        if result.get("error"):
+            logger.error(f"Transcription failed: {result['error']}")
+        else:
+            logger.info(
+                f"Transcription successful: '{result['text']}' (confidence: {result['confidence']:.3f})"
+            )
+
+        return result
+
+    except Exception as e:
+        logger.error(f"Wav2Vec2 test failed: {e}")
+        return {"error": str(e)}
+
+
+def test_preprocessing_service():
+    """Test preprocessing service"""
+    logger.info("Testing Audio Preprocessing Service...")
+
+    try:
+        # Get service
+        preprocessing_service = get_preprocessing_service()
+
+        # Create test audio
+        test_audio = create_speech_like_audio(duration=2.0)
+        logger.info(f"Created test audio: {len(test_audio)} bytes")
+
+        # Test preprocessing
+        result = preprocessing_service.preprocess_audio_bytes(test_audio)
+
+        if result.get("error"):
+            logger.error(f"Preprocessing failed: {result['error']}")
+        else:
+            logger.info(f"Preprocessing successful:")
+            logger.info(f"  - Audio duration: {result['duration']:.2f}s")
+            logger.info(f"  - MFCC features shape: {result['mfcc_features'].shape}")
+            logger.info(
+                f"  - Spectral features: {list(result['spectral_features'].keys())}"
+            )
+            logger.info(
+                f"  - Feature statistics keys: {list(result['feature_statistics'].keys())}"
+            )
+
+        return result
+
+    except Exception as e:
+        logger.error(f"Preprocessing test failed: {e}")
+        return {"error": str(e)}
+
+
+async def test_integration():
+    """Integration test"""
+    logger.info("Testing ML Models Integration...")
+
+    try:
+        # Create test audio
+        test_audio = create_speech_like_audio(duration=3.0)
+        logger.info(f"Created integration test audio: {len(test_audio)} bytes")
+
+        # Preprocessing
+        preprocessing_service = get_preprocessing_service()
+        preprocessed = preprocessing_service.preprocess_audio_bytes(test_audio)
+
+        if preprocessed.get("error"):
+            logger.error(f"Preprocessing failed: {preprocessed['error']}")
+            return
+
+        # Wav2Vec2 transcription
+        wav2vec_service = get_wav2vec_service()
+        transcription = wav2vec_service.transcribe_audio_bytes(
+            test_audio, language="en"
+        )
+
+        if transcription.get("error"):
+            logger.error(f"Transcription failed: {transcription['error']}")
+        else:
+            logger.info(f"Integration test successful:")
+            logger.info(f"  - Preprocessing: ✓")
+            logger.info(
+                f"  - Transcription: '{transcription['text']}' (confidence: {transcription['confidence']:.3f})"
+            )
+            logger.info(f"  - Provider: {transcription['provider']}")
+            logger.info(f"  - Model: {transcription['model']}")
+
+        return {"preprocessing": preprocessed, "transcription": transcription}
+
+    except Exception as e:
+        logger.error(f"Integration test failed: {e}")
+        return {"error": str(e)}
+
+
+async def main():
+    """Main test function"""
+    logger.info("Starting ML Models Test...")
+
+    # Wav2Vec2 test
+    wav2vec_result = await test_wav2vec_service()
+
+    # Preprocessing test
+    preprocessing_result = test_preprocessing_service()
+
+    # Integration test
+    integration_result = await test_integration()
+
+    logger.info("ML Models Test completed!")
+
+    return {
+        "wav2vec": wav2vec_result,
+        "preprocessing": preprocessing_result,
+        "integration": integration_result,
+    }
+
+
+if __name__ == "__main__":
+    # Run tests
+    results = asyncio.run(main())
+
+    print("\n" + "=" * 50)
+    print("TEST RESULTS SUMMARY")
+    print("=" * 50)
+
+    for test_name, result in results.items():
+        print(f"\n{test_name.upper()}:")
+        if result.get("error"):
+            print(f"  ❌ Error: {result['error']}")
+        else:
+            print(f"  ✅ Success")
+            if test_name == "wav2vec" and "text" in result:
+                print(f"  Text: '{result['text']}'")
+                print(f"  Confidence: {result['confidence']:.3f}")
+            elif test_name == "preprocessing" and "duration" in result:
+                print(f"  Duration: {result['duration']:.2f}s")
+                print(f"  MFCC Shape: {result['mfcc_features'].shape}")
+            elif test_name == "integration":
+                print(
+                    f"  Preprocessing: {'✓' if not result.get('preprocessing', {}).get('error') else '❌'}"
+                )
+                print(
+                    f"  Transcription: {'✓' if not result.get('transcription', {}).get('error') else '❌'}"
+                )

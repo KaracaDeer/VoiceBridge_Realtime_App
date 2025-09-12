@@ -1,0 +1,171 @@
+{
+	"id": "voicebridge-dev-env",
+	"name": "VoiceBridge Development Environment",
+	"values": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "ws_base_url",
+			"value": "ws://localhost:8000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "api_host",
+			"value": "localhost",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "api_port",
+			"value": "8000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "grpc_port",
+			"value": "50051",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "redis_url",
+			"value": "redis://localhost:6379",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "mysql_host",
+			"value": "localhost",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "mysql_port",
+			"value": "3306",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "mysql_database",
+			"value": "voicebridge_dev",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "mongodb_url",
+			"value": "mongodb://localhost:27017",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "mongodb_database",
+			"value": "voicebridge_dev",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "kafka_bootstrap_servers",
+			"value": "localhost:9092",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "openai_api_key",
+			"value": "your-openai-api-key-here",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "jwt_secret_key",
+			"value": "your-jwt-secret-key-here",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "encryption_key",
+			"value": "your-encryption-key-here",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "mlflow_tracking_uri",
+			"value": "http://localhost:5000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "wandb_project",
+			"value": "voicebridge-dev",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "prometheus_port",
+			"value": "9090",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "grafana_port",
+			"value": "3000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "test_username",
+			"value": "testuser",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "test_email",
+			"value": "test@example.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "test_password",
+			"value": "securepassword123",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "session_id",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "task_id",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2024-01-01T00:00:00.000Z",
+	"_postman_exported_using": "Postman/10.0.0"
+}

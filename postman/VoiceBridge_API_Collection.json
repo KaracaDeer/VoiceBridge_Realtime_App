@@ -1,0 +1,1067 @@
+{
+	"info": {
+		"_postman_id": "voicebridge-api-collection",
+		"name": "VoiceBridge Real-time Speech-to-Text API",
+		"description": "Comprehensive API collection for VoiceBridge real-time speech-to-text service. Includes authentication, real-time streaming, monitoring, and transcription endpoints.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "voicebridge-exporter"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser\",\n    \"email\": \"test@example.com\",\n    \"password\": \"securepassword123\",\n    \"first_name\": \"Test\",\n    \"last_name\": \"User\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user account with username, email, and password."
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"securepassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate user and receive access tokens."
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Refresh access token using refresh token."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get current authenticated user information."
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Info",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"Updated\",\n    \"last_name\": \"Name\",\n    \"language_preference\": \"en\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Update current user information."
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"current_password\": \"securepassword123\",\n    \"new_password\": \"newsecurepassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/change-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"change-password"
+							]
+						},
+						"description": "Change user password."
+					},
+					"response": []
+				},
+				{
+					"name": "Logout User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout user (client should discard tokens)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rate Limit Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/rate-limit-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"rate-limit-status"
+							]
+						},
+						"description": "Get current rate limit status for the user."
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user management, login, and token operations."
+		},
+		{
+			"name": "Transcription",
+			"item": [
+				{
+					"name": "Transcribe Audio File",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "audio_file",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/transcribe",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transcribe"
+							]
+						},
+						"description": "Transcribe audio file using OpenAI Whisper API. Supports various audio formats."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transcription Result",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transcribe/{{task_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transcribe",
+								"{{task_id}}"
+							]
+						},
+						"description": "Get transcription result for a specific task ID."
+					},
+					"response": []
+				}
+			],
+			"description": "Audio transcription endpoints for processing audio files and getting results."
+		},
+		{
+			"name": "Real-time Streaming",
+			"item": [
+				{
+					"name": "Get Real-time Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/realtime/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realtime",
+								"status"
+							]
+						},
+						"description": "Get real-time streaming service status including WebSocket, Kafka, and gRPC services."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Active Sessions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/realtime/sessions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realtime",
+								"sessions"
+							]
+						},
+						"description": "Get active streaming sessions (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Session Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/realtime/sessions/{{session_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realtime",
+								"sessions",
+								"{{session_id}}"
+							]
+						},
+						"description": "Get status of a specific session (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Broadcast to Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"message\",\n    \"content\": \"Hello from server\",\n    \"timestamp\": \"2024-01-01T00:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/realtime/sessions/{{session_id}}/broadcast",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realtime",
+								"sessions",
+								"{{session_id}}",
+								"broadcast"
+							]
+						},
+						"description": "Broadcast message to all connections in a session (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kafka Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/realtime/kafka/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realtime",
+								"kafka",
+								"status"
+							]
+						},
+						"description": "Get Kafka streaming service status (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get gRPC Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/realtime/grpc/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realtime",
+								"grpc",
+								"status"
+							]
+						},
+						"description": "Get gRPC service status (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Test Audio Stream",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"session_id\": \"test-session-123\",\n    \"user_id\": \"test-user-456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/realtime/test/audio-stream",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realtime",
+								"test",
+								"audio-stream"
+							]
+						},
+						"description": "Test audio streaming functionality (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Real-time Metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/realtime/metrics",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realtime",
+								"metrics"
+							]
+						},
+						"description": "Get real-time streaming metrics including WebSocket and Kafka statistics."
+					},
+					"response": []
+				},
+				{
+					"name": "Cleanup Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/realtime/cleanup/session/{{session_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realtime",
+								"cleanup",
+								"session",
+								"{{session_id}}"
+							]
+						},
+						"description": "Clean up a streaming session (requires authentication)."
+					},
+					"response": []
+				}
+			],
+			"description": "Real-time streaming endpoints for WebSocket connections, Kafka, and gRPC services."
+		},
+		{
+			"name": "Monitoring",
+			"item": [
+				{
+					"name": "Get System Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/monitoring/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"health"
+							]
+						},
+						"description": "Get overall system health status including system and model health."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Prometheus Metrics (Text)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/monitoring/metrics",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"metrics"
+							]
+						},
+						"description": "Get Prometheus metrics in text format."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Prometheus Metrics (JSON)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/monitoring/metrics/json",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"metrics",
+								"json"
+							]
+						},
+						"description": "Get Prometheus metrics in JSON format."
+					},
+					"response": []
+				},
+				{
+					"name": "Get MLFlow Experiments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/monitoring/mlflow/experiments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"mlflow",
+								"experiments"
+							]
+						},
+						"description": "Get MLFlow experiment runs (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get MLFlow Performance Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/monitoring/mlflow/performance-summary",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"mlflow",
+								"performance-summary"
+							]
+						},
+						"description": "Get MLFlow performance summary (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Model Performance",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/monitoring/models/performance?model_name=whisper",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"models",
+								"performance"
+							],
+							"query": [
+								{
+									"key": "model_name",
+									"value": "whisper"
+								}
+							]
+						},
+						"description": "Get model performance summary (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Model Alerts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/monitoring/models/alerts?model_name=whisper&severity=critical&hours=24",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"models",
+								"alerts"
+							],
+							"query": [
+								{
+									"key": "model_name",
+									"value": "whisper"
+								},
+								{
+									"key": "severity",
+									"value": "critical"
+								},
+								{
+									"key": "hours",
+									"value": "24"
+								}
+							]
+						},
+						"description": "Get model drift alerts (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Model Health",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/monitoring/models/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"models",
+								"health"
+							]
+						},
+						"description": "Get model health status (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get W&B Run URL",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/monitoring/wandb/run-url",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"wandb",
+								"run-url"
+							]
+						},
+						"description": "Get current W&B run URL (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Record Model Performance",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"model_name\": \"whisper\",\n    \"accuracy\": 0.95,\n    \"confidence\": 0.92,\n    \"processing_time\": 1.5,\n    \"error_occurred\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/monitoring/models/record-performance",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"models",
+								"record-performance"
+							]
+						},
+						"description": "Record model performance metrics (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get System Resources",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/monitoring/system/resources",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"system",
+								"resources"
+							]
+						},
+						"description": "Get system resource usage including CPU, memory, disk, and network."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recent Logs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/monitoring/logs/recent?lines=100&level=ERROR",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"logs",
+								"recent"
+							],
+							"query": [
+								{
+									"key": "lines",
+									"value": "100"
+								},
+								{
+									"key": "level",
+									"value": "ERROR"
+								}
+							]
+						},
+						"description": "Get recent application logs (requires authentication)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dashboard Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/monitoring/dashboard/summary",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"monitoring",
+								"dashboard",
+								"summary"
+							]
+						},
+						"description": "Get comprehensive dashboard summary (requires authentication)."
+					},
+					"response": []
+				}
+			],
+			"description": "Monitoring endpoints for system health, metrics, MLFlow, model monitoring, and logging."
+		},
+		{
+			"name": "System",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Basic health check endpoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Detailed Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Detailed health check with service status information."
+					},
+					"response": []
+				},
+				{
+					"name": "Configure API Key",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"api_key\": \"your-openai-api-key-here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/configure",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"configure"
+							]
+						},
+						"description": "Configure OpenAI API key for Whisper service."
+					},
+					"response": []
+				}
+			],
+			"description": "System endpoints for health checks and configuration."
+		},
+		{
+			"name": "WebSocket Examples",
+			"item": [
+				{
+					"name": "WebSocket Connection (No Auth)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ws_base_url}}/ws/test-client-123",
+							"host": [
+								"{{ws_base_url}}"
+							],
+							"path": [
+								"ws",
+								"test-client-123"
+							]
+						},
+						"description": "WebSocket connection without authentication for real-time audio streaming."
+					},
+					"response": []
+				},
+				{
+					"name": "WebSocket Connection (With Auth)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ws_base_url}}/ws/test-client-456?token={{access_token}}",
+							"host": [
+								"{{ws_base_url}}"
+							],
+							"path": [
+								"ws",
+								"test-client-456"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{access_token}}"
+								}
+							]
+						},
+						"description": "WebSocket connection with authentication token for real-time audio streaming."
+					},
+					"response": []
+				},
+				{
+					"name": "Real-time Stream WebSocket",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ws_base_url}}/realtime/ws/stream?token={{access_token}}&session_id=test-session",
+							"host": [
+								"{{ws_base_url}}"
+							],
+							"path": [
+								"realtime",
+								"ws",
+								"stream"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{access_token}}"
+								},
+								{
+									"key": "session_id",
+									"value": "test-session"
+								}
+							]
+						},
+						"description": "Real-time streaming WebSocket endpoint with session management."
+					},
+					"response": []
+				}
+			],
+			"description": "WebSocket connection examples for real-time audio streaming and transcription."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Auto-generate session ID if not set",
+					"if (!pm.environment.get('session_id')) {",
+					"    pm.environment.set('session_id', 'session-' + Date.now());",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Auto-save tokens from login response",
+					"if (pm.response.json() && pm.response.json().access_token) {",
+					"    pm.environment.set('access_token', pm.response.json().access_token);",
+					"    pm.environment.set('refresh_token', pm.response.json().refresh_token);",
+					"    console.log('Tokens saved to environment');",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "ws_base_url",
+			"value": "ws://localhost:8000",
+			"type": "string"
+		}
+	]
+}

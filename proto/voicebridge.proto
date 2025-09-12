@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package voicebridge;
+
+// Transcription status enum
+enum TranscriptionStatus {
+    UNKNOWN = 0;
+    PROCESSING = 1;
+    COMPLETED = 2;
+    FAILED = 3;
+    PARTIAL = 4;
+}
+
+// Audio streaming service
+service AudioStreamingService {
+    // Stream audio data for real-time transcription
+    rpc StreamAudio(stream AudioChunk) returns (stream TranscriptionResult);
+    
+    // Get transcription status
+    rpc GetTranscriptionStatus(TranscriptionRequest) returns (TranscriptionStatusResponse);
+    
+    // Health check
+    rpc HealthCheck(HealthRequest) returns (HealthResponse);
+}
+
+// Audio chunk message
+message AudioChunk {
+    string session_id = 1;
+    string user_id = 2;
+    bytes audio_data = 3;
+    int32 sample_rate = 4;
+    int32 channels = 5;
+    string format = 6;
+    int64 timestamp = 7;
+    string language = 8;
+}
+
+// Transcription result message
+message TranscriptionResult {
+    string session_id = 1;
+    string user_id = 2;
+    string text = 3;
+    float confidence = 4;
+    string language = 5;
+    int64 timestamp = 6;
+    TranscriptionStatus status = 7;
+    string model_name = 8;
+    float processing_time = 9;
+}
+
+// Transcription request message
+message TranscriptionRequest {
+    string session_id = 1;
+    string user_id = 2;
+}
+
+// Transcription status response message
+message TranscriptionStatusResponse {
+    string session_id = 1;
+    string user_id = 2;
+    TranscriptionStatus status = 3;
+    string message = 4;
+    int64 timestamp = 5;
+}
+
+// Health check messages
+message HealthRequest {
+    string service = 1;
+}
+
+message HealthResponse {
+    bool healthy = 1;
+    string status = 2;
+    string version = 3;
+    int64 timestamp = 4;
+}
+
+// Real-time text streaming service
+service TextStreamingService {
+    // Stream text results to clients
+    rpc StreamText(stream TextStreamRequest) returns (stream TextStreamResponse);
+    
+    // Subscribe to text updates
+    rpc SubscribeToText(TextSubscription) returns (stream TextUpdate);
+}
+
+// Text stream request
+message TextStreamRequest {
+    string session_id = 1;
+    string user_id = 2;
+    string text = 3;
+    float confidence = 4;
+    int64 timestamp = 5;
+}
+
+// Text stream response
+message TextStreamResponse {
+    string session_id = 1;
+    bool success = 2;
+    string message = 3;
+    int64 timestamp = 4;
+}
+
+// Text subscription
+message TextSubscription {
+    string session_id = 1;
+    string user_id = 2;
+    repeated string filters = 3;
+}
+
+// Text update
+message TextUpdate {
+    string session_id = 1;
+    string user_id = 2;
+    string text = 3;
+    float confidence = 4;
+    string language = 5;
+    int64 timestamp = 6;
+    UpdateType type = 7;
+}
+
+// Update type enum
+enum UpdateType {
+    NEW_TEXT = 0;
+    UPDATE_TEXT = 1;
+    DELETE_TEXT = 2;
+    FINAL_TEXT = 3;
+}
+
+// Audio processing service
+service AudioProcessingService {
+    // Process audio chunk
+    rpc ProcessAudioChunk(AudioChunk) returns (ProcessingResult);
+    
+    // Batch process audio
+    rpc BatchProcessAudio(stream AudioChunk) returns (stream ProcessingResult);
+    
+    // Get processing statistics
+    rpc GetProcessingStats(StatsRequest) returns (ProcessingStats);
+}
+
+// Processing result
+message ProcessingResult {
+    string session_id = 1;
+    string user_id = 2;
+    bool success = 3;
+    string error_message = 4;
+    float processing_time = 5;
+    TranscriptionResult transcription = 6;
+    int64 timestamp = 7;
+}
+
+// Stats request
+message StatsRequest {
+    string session_id = 1;
+    int64 start_time = 2;
+    int64 end_time = 3;
+}
+
+// Processing statistics
+message ProcessingStats {
+    int32 total_chunks = 1;
+    int32 successful_chunks = 2;
+    int32 failed_chunks = 3;
+    float average_processing_time = 4;
+    float average_confidence = 5;
+    int64 total_audio_duration = 6;
+    repeated string errors = 7;
+}

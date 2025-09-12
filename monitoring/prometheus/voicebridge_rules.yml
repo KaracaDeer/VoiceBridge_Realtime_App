@@ -1,0 +1,112 @@
+groups:
+  - name: voicebridge_alerts
+    rules:
+      - alert: HighCPUUsage
+        expr: voicebridge_system_cpu_usage_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 80% for more than 5 minutes"
+
+      - alert: HighMemoryUsage
+        expr: voicebridge_system_memory_usage_percent > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is above 85% for more than 5 minutes"
+
+      - alert: HighDiskUsage
+        expr: voicebridge_system_disk_usage_percent > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High disk usage detected"
+          description: "Disk usage is above 90% for more than 5 minutes"
+
+      - alert: HighErrorRate
+        expr: rate(voicebridge_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is above 0.1 errors per second for more than 2 minutes"
+
+      - alert: TranscriptionFailureRate
+        expr: rate(voicebridge_transcription_requests_total{status="failure"}[5m]) / rate(voicebridge_transcription_requests_total[5m]) > 0.1
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High transcription failure rate"
+          description: "Transcription failure rate is above 10% for more than 3 minutes"
+
+      - alert: LowTranscriptionConfidence
+        expr: histogram_quantile(0.50, rate(voicebridge_transcription_confidence_bucket[5m])) < 0.7
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low transcription confidence"
+          description: "Median transcription confidence is below 70% for more than 5 minutes"
+
+      - alert: HighProcessingTime
+        expr: histogram_quantile(0.95, rate(voicebridge_transcription_duration_seconds_bucket[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High transcription processing time"
+          description: "95th percentile processing time is above 10 seconds for more than 5 minutes"
+
+      - alert: RateLimitExceeded
+        expr: rate(voicebridge_rate_limit_hits_total[5m]) > 0.5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High rate limit hits"
+          description: "Rate limit hits are above 0.5 per second for more than 2 minutes"
+
+      - alert: WebSocketConnectionDrop
+        expr: voicebridge_websocket_connections < 1
+        for: 1m
+        labels:
+          severity: info
+        annotations:
+          summary: "No active WebSocket connections"
+          description: "No active WebSocket connections for more than 1 minute"
+
+      - alert: ModelDriftDetected
+        expr: voicebridge_model_accuracy < 0.8
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Model performance degradation detected"
+          description: "Model accuracy is below 80% for more than 10 minutes"
+
+  - name: voicebridge_model_monitoring
+    rules:
+      - alert: ModelAccuracyDrop
+        expr: voicebridge_model_accuracy < 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Model accuracy dropped"
+          description: "Model accuracy is below 85% for more than 5 minutes"
+
+      - alert: ModelLatencyIncrease
+        expr: histogram_quantile(0.95, rate(voicebridge_model_latency_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Model latency increased"
+          description: "95th percentile model latency is above 5 seconds for more than 5 minutes"

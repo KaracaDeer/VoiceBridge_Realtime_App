@@ -1,0 +1,52 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3
+        args: [--line-length=120]
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: [--profile=black, --line-length=120]
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        args: [--max-line-length=120, --ignore=E501, --ignore=W503, --ignore=E203, --ignore=F401, --ignore=F541]
+        exclude: ^proto/
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        additional_dependencies: 
+          - types-requests
+          - types-redis
+          - types-protobuf
+          - pbr
+        args: [--ignore-missing-imports, --check-untyped-defs, --disable-error-code=no-any-return, --disable-error-code=index, --disable-error-code=attr-defined, --disable-error-code=var-annotated, --disable-error-code=call-arg, --disable-error-code=arg-type]
+
+#  - repo: https://github.com/PyCQA/bandit
+#    rev: 1.7.5
+#    hooks:
+#      - id: bandit
+#        args: [-r, src/, -f, json, -o, bandit-report.json, --severity-level=high, --exit-zero]
+#        exclude: tests/
+#        additional_dependencies: [pbr]
+#        files: ^src/
+#        pass_filenames: false
+#        verbose: true
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+        args: [--tb=short, -x]

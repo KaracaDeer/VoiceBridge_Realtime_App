@@ -1,0 +1,228 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "VoiceBridge API Monitoring Dashboard",
+    "tags": ["voicebridge", "api", "monitoring"],
+    "style": "dark",
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "System Health Overview",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "voicebridge_system_cpu_usage_percent",
+            "legendFormat": "CPU Usage %"
+          },
+          {
+            "expr": "voicebridge_system_memory_usage_percent",
+            "legendFormat": "Memory Usage %"
+          },
+          {
+            "expr": "voicebridge_system_disk_usage_percent",
+            "legendFormat": "Disk Usage %"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 70},
+                {"color": "red", "value": 90}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "API Request Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(voicebridge_requests_total[5m])",
+            "legendFormat": "{{method}} {{endpoint}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "yAxes": [
+          {
+            "label": "Requests/sec",
+            "min": 0
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Transcription Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(voicebridge_transcription_requests_total[5m])",
+            "legendFormat": "{{model}} - {{status}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "yAxes": [
+          {
+            "label": "Transcriptions/sec",
+            "min": 0
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Transcription Confidence Distribution",
+        "type": "histogram",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(voicebridge_transcription_confidence_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.50, rate(voicebridge_transcription_confidence_bucket[5m]))",
+            "legendFormat": "50th percentile"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "yAxes": [
+          {
+            "label": "Confidence Score",
+            "min": 0,
+            "max": 1
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Processing Time",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(voicebridge_transcription_duration_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.50, rate(voicebridge_transcription_duration_seconds_bucket[5m]))",
+            "legendFormat": "50th percentile"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+        "yAxes": [
+          {
+            "label": "Processing Time (seconds)",
+            "min": 0
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "WebSocket Connections",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "voicebridge_websocket_connections",
+            "legendFormat": "Active Connections"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 50},
+                {"color": "red", "value": 100}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "Error Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(voicebridge_errors_total[5m])",
+            "legendFormat": "{{error_type}} - {{component}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+        "yAxes": [
+          {
+            "label": "Errors/sec",
+            "min": 0
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Rate Limiting",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(voicebridge_rate_limit_hits_total[5m])",
+            "legendFormat": "{{endpoint}} - {{client_type}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+        "yAxes": [
+          {
+            "label": "Rate Limit Hits/sec",
+            "min": 0
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Model Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "voicebridge_model_accuracy",
+            "legendFormat": "{{model_name}} Accuracy"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32},
+        "yAxes": [
+          {
+            "label": "Accuracy",
+            "min": 0,
+            "max": 1
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Model Latency",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(voicebridge_model_latency_seconds_bucket[5m]))",
+            "legendFormat": "{{model_name}} 95th percentile"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 32},
+        "yAxes": [
+          {
+            "label": "Latency (seconds)",
+            "min": 0
+          }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "30s",
+    "schemaVersion": 27,
+    "version": 1
+  }
+}

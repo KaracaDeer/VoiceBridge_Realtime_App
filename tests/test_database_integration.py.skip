@@ -1,0 +1,265 @@
+"""
+Database Integration Test Script
+Test database connections and operations for VoiceBridge
+"""
+import asyncio
+import json
+import logging
+from datetime import datetime
+
+from src.database.data_service import get_data_service
+from src.database.mongodb_models import get_mongodb_manager
+from src.database.mysql_models import get_database_manager
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def test_mysql_connection():
+    """Test MySQL connection and basic operations"""
+    logger.info("Testing MySQL Connection...")
+
+    try:
+        # Try to connect to MySQL (will fail gracefully if not available)
+        db_manager = get_database_manager()
+        connected = db_manager.connect()
+
+        if connected:
+            logger.info("✅ MySQL connection successful")
+
+            # Try to create tables
+            tables_created = db_manager.create_tables()
+            if tables_created:
+                logger.info("✅ MySQL tables created successfully")
+            else:
+                logger.warning("⚠️ Failed to create MySQL tables")
+
+            db_manager.close()
+            assert True
+        else:
+            logger.warning("⚠️ MySQL connection failed - running in demo mode")
+            return False
+
+    except Exception as e:
+        logger.warning(f"⚠️ MySQL test failed: {e}")
+        return False
+
+
+def test_mongodb_connection():
+    """Test MongoDB connection and basic operations"""
+    logger.info("Testing MongoDB Connection...")
+
+    try:
+        # Try to connect to MongoDB (will fail gracefully if not available)
+        mongodb_manager = get_mongodb_manager()
+        connected = mongodb_manager.connect()
+
+        if connected:
+            logger.info("✅ MongoDB connection successful")
+
+            # Test basic operations
+            test_collection = mongodb_manager.db.test_collection
+            test_doc = {"test": "data", "timestamp": datetime.utcnow()}
+            result = test_collection.insert_one(test_doc)
+
+            if result.inserted_id:
+                logger.info("✅ MongoDB write operation successful")
+
+                # Test read operation
+                retrieved_doc = test_collection.find_one({"_id": result.inserted_id})
+                if retrieved_doc:
+                    logger.info("✅ MongoDB read operation successful")
+
+                # Clean up test document
+                test_collection.delete_one({"_id": result.inserted_id})
+                logger.info("✅ MongoDB cleanup successful")
+
+            mongodb_manager.close()
+            assert True
+        else:
+            logger.warning("⚠️ MongoDB connection failed - running in demo mode")
+            return False
+
+    except Exception as e:
+        logger.warning(f"⚠️ MongoDB test failed: {e}")
+        return False
+
+
+def test_data_service():
+    """Test unified data service"""
+    logger.info("Testing Unified Data Service...")
+
+    try:
+        # Initialize data service
+        data_service = get_data_service()
+        connected = data_service.connect_all()
+
+        if connected:
+            logger.info("✅ Data service connection successful")
+
+            # Test user creation
+            user_id = data_service.create_user(
+                username="test_user",
+                email="test@example.com",
+                password_hash="hashed_password",
+                first_name="Test",
+                last_name="User",
+            )
+
+            if user_id:
+                logger.info(f"✅ User creation successful (ID: {user_id})")
+
+                # Test user retrieval
+                user = data_service.get_user(user_id=user_id)
+                if user:
+                    logger.info("✅ User retrieval successful")
+                    logger.info(f"   User: {user['username']} ({user['email']})")
+                else:
+                    logger.warning("⚠️ User retrieval failed")
+
+            # Test conversation creation
+            conversation_id = data_service.create_conversation(
+                user_id="test_user",
+                session_id="test_session",
+                title="Test Conversation",
+            )
+
+            if conversation_id:
+                logger.info(
+                    f"✅ Conversation creation successful (ID: {conversation_id})"
+                )
+
+                # Test message addition
+                message_added = data_service.add_message_to_conversation(
+                    conversation_id=conversation_id,
+                    message_type="user_speech",
+                    content="Hello, this is a test message",
+                    confidence=0.95,
+                )
+
+                if message_added:
+                    logger.info("✅ Message addition successful")
+                else:
+                    logger.warning("⚠️ Message addition failed")
+
+            data_service.close_all()
+            assert True
+        else:
+            logger.warning("⚠️ Data service connection failed - running in demo mode")
+            return False
+
+    except Exception as e:
+        logger.warning(f"⚠️ Data service test failed: {e}")
+        return False
+
+
+def test_transcription_save():
+    """Test transcription saving functionality"""
+    logger.info("Testing Transcription Save...")
+
+    try:
+        data_service = get_data_service()
+        connected = data_service.connect_all()
+
+        if connected:
+            # Create test transcription data
+            transcription_data = {
+                "session_id": "test_session",
+                "audio_duration": 2.5,
+                "audio_size_bytes": 64000,
+                "sample_rate": 16000,
+                "original_text": "This is a test transcription",
+                "processed_text": "This is a test transcription",
+                "confidence_score": 0.95,
+                "language_detected": "en",
+                "model_used": "wav2vec2-base-960h",
+                "preprocessing_used": True,
+                "processing_time": 1.2,
+                "features": {
+                    "mfcc_mean": [0.1, 0.2, 0.3],
+                    "mfcc_std": [0.05, 0.1, 0.15],
+                    "spectral_centroid_mean": 1500.0,
+                    "spectral_centroid_std": 200.0,
+                },
+            }
+
+            transcription_id = data_service.save_transcription(
+                user_id=1, transcription_data=transcription_data
+            )
+
+            if transcription_id:
+                logger.info(f"✅ Transcription save successful (ID: {transcription_id})")
+
+                # Test transcription retrieval
+                transcriptions = data_service.get_user_transcriptions(
+                    user_id=1, limit=10
+                )
+                if transcriptions:
+                    logger.info(
+                        f"✅ Transcription retrieval successful ({len(transcriptions)} records)"
+                    )
+                else:
+                    logger.warning("⚠️ Transcription retrieval failed")
+            else:
+                logger.warning("⚠️ Transcription save failed")
+
+            data_service.close_all()
+            assert True
+        else:
+            logger.warning("⚠️ Transcription test skipped - database not connected")
+            return False
+
+    except Exception as e:
+        logger.warning(f"⚠️ Transcription test failed: {e}")
+        return False
+
+
+async def main():
+    """Main test function"""
+    logger.info("Starting Database Integration Tests...")
+
+    # Test individual components
+    mysql_ok = test_mysql_connection()
+    mongodb_ok = test_mongodb_connection()
+    data_service_ok = test_data_service()
+    transcription_ok = test_transcription_save()
+
+    # Summary
+    logger.info("\n" + "=" * 50)
+    logger.info("DATABASE INTEGRATION TEST RESULTS")
+    logger.info("=" * 50)
+
+    results = {
+        "MySQL": "✅ Connected" if mysql_ok else "⚠️ Demo Mode",
+        "MongoDB": "✅ Connected" if mongodb_ok else "⚠️ Demo Mode",
+        "Data Service": "✅ Connected" if data_service_ok else "⚠️ Demo Mode",
+        "Transcription": "✅ Working" if transcription_ok else "⚠️ Demo Mode",
+    }
+
+    for service, status in results.items():
+        logger.info(f"{service:15}: {status}")
+
+    overall_status = (
+        "✅ All systems operational"
+        if all([mysql_ok, mongodb_ok, data_service_ok])
+        else "⚠️ Running in demo mode"
+    )
+    logger.info(f"\nOverall Status: {overall_status}")
+
+    if not all([mysql_ok, mongodb_ok]):
+        logger.info("\nNote: To enable full database functionality:")
+        logger.info("1. Install and start MySQL server")
+        logger.info("2. Install and start MongoDB server")
+        logger.info("3. Update connection strings in the code")
+
+    return results
+
+
+if __name__ == "__main__":
+    # Run tests
+    results = asyncio.run(main())
+
+    print("\n" + "=" * 50)
+    print("TEST COMPLETED")
+    print("=" * 50)

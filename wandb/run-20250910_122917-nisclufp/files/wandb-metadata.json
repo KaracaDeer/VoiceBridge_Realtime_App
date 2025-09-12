@@ -1,0 +1,24 @@
+{
+  "os":  "Windows-10-10.0.26100-SP0",
+  "python":  "CPython 3.11.0",
+  "startedAt":  "2025-09-10T09:29:17.318215Z",
+  "program":  "D:\\VoiceBridge_Realtime_App\\test_fixes.py",
+  "codePath":  "test_fixes.py",
+  "codePathLocal":  "test_fixes.py",
+  "email":  "fatmakaracaerdogan@gmail.com",
+  "root":  "D:\\VoiceBridge_Realtime_App",
+  "host":  "LAPTOP-PIOUJ1OI",
+  "executable":  "C:\\Users\\fatma\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "cpu_count":  4,
+  "cpu_count_logical":  8,
+  "disk":  {
+    "/":  {
+      "total":  "153394081792",
+      "used":  "82847129600"
+    }
+  },
+  "memory":  {
+    "total":  "7448702976"
+  },
+  "writerId":  "gu68e79yfaf0k4bnk63d2z44u5vl7cy1"
+}

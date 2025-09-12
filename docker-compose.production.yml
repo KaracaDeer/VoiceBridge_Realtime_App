@@ -1,0 +1,230 @@
+version: '3.8'
+
+services:
+  # Redis for rate limiting and caching
+  redis:
+    image: redis:7-alpine
+    container_name: voicebridge_redis_prod
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Kafka for real-time streaming
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: voicebridge_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_logs:/var/lib/zookeeper/log
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: voicebridge_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    restart: unless-stopped
+
+  # MLFlow Tracking Server
+  mlflow:
+    image: python:3.9-slim
+    container_name: voicebridge_mlflow_prod
+    ports:
+      - "5000:5000"
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow.db
+      - MLFLOW_DEFAULT_ARTIFACT_ROOT=/mlflow/artifacts
+    volumes:
+      - mlflow_data:/mlflow
+    command: >
+      bash -c "
+        pip install mlflow==2.8.1 &&
+        mlflow server 
+        --backend-store-uri sqlite:///mlflow.db 
+        --default-artifact-root /mlflow/artifacts 
+        --host 0.0.0.0 
+        --port 5000
+      "
+    restart: unless-stopped
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: voicebridge_prometheus_prod
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus/voicebridge_rules.yml:/etc/prometheus/voicebridge_rules.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: voicebridge_grafana_prod
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboard.json:/etc/grafana/provisioning/dashboards/voicebridge.json
+    restart: unless-stopped
+
+  # Node Exporter (for system metrics)
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: voicebridge_node_exporter_prod
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+
+  # VoiceBridge API Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: voicebridge_backend_prod
+    ports:
+      - "8000:8000"
+      - "50051:50051"  # gRPC port
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - SECRET_KEY=your-super-secret-key-change-in-production-min-32-chars
+      - ENCRYPTION_KEY=your-32-byte-encryption-key-here-12345678901234567890123456789012
+      - OPENAI_API_KEY=your-openai-api-key-here
+      - WANDB_API_KEY=your-wandb-api-key-here
+      - MYSQL_CONNECTION_STRING=mysql+mysqlconnector://root:password@mysql:3306/voicebridge
+      - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/
+    volumes:
+      - ./logs:/app/logs
+      - ./secure_storage:/app/secure_storage
+      - ./mlflow_artifacts:/app/mlflow_artifacts
+    depends_on:
+      - redis
+      - kafka
+      - mlflow
+    restart: unless-stopped
+    command: >
+      bash -c "
+        python scripts/generate_proto.py &&
+        python -m uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+      "
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: voicebridge_mysql_prod
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=voicebridge
+      - MYSQL_USER=voicebridge
+      - MYSQL_PASSWORD=voicebridge_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+  # MongoDB
+  mongodb:
+    image: mongo:6.0
+    container_name: voicebridge_mongodb_prod
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=voicebridge
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+
+  # Celery Worker
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: voicebridge_celery_worker_prod
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - SECRET_KEY=your-super-secret-key-change-in-production-min-32-chars
+      - ENCRYPTION_KEY=your-32-byte-encryption-key-here-12345678901234567890123456789012
+      - OPENAI_API_KEY=your-openai-api-key-here
+      - WANDB_API_KEY=your-wandb-api-key-here
+      - MYSQL_CONNECTION_STRING=mysql+mysqlconnector://root:password@mysql:3306/voicebridge
+      - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/
+    volumes:
+      - ./logs:/app/logs
+      - ./secure_storage:/app/secure_storage
+    depends_on:
+      - redis
+      - kafka
+      - mysql
+      - mongodb
+    restart: unless-stopped
+    command: celery -A celery_app worker --loglevel=info --concurrency=4
+
+  # Celery Flower (Monitoring)
+  celery_flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: voicebridge_celery_flower_prod
+    ports:
+      - "5555:5555"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    restart: unless-stopped
+    command: celery -A celery_app flower --port=5555
+
+volumes:
+  redis_data:
+  kafka_data:
+  zookeeper_data:
+  zookeeper_logs:
+  mlflow_data:
+  prometheus_data:
+  grafana_data:
+  mysql_data:
+  mongodb_data:

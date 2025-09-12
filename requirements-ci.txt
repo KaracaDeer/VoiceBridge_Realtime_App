@@ -1,0 +1,23 @@
+# Core FastAPI dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic>=2.6.0
+pydantic-settings==2.1.0
+python-multipart==0.0.6
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# CI/CD and Code Quality Tools
+flake8==7.0.0
+black==23.12.1
+isort==5.13.2
+mypy==1.8.0
+bandit==1.7.5
+safety==3.6.1
+pre-commit==3.6.0
+
+# Basic dependencies for testing
+requests==2.31.0
+python-dotenv==1.0.0
