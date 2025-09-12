@@ -13,10 +13,6 @@ It combines deep learning, distributed systems, and big data technologies to del
 
 🇹🇷 [Turkish README](README_TR.md)
 
-🎯 Demo
-
-![VoiceBridge Demo](docs/images/demo.gif)
-
 ✨ Features
 🎤 Real-time Voice Processing - Advanced speech recognition and transcription
 🤖 AI-Powered Transcription - Multiple ML models including Whisper, Wav2Vec2, and OpenAI
