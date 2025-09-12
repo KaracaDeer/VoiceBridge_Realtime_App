@@ -15,7 +15,7 @@ Derin öğrenme, dağıtık sistemler ve büyük veri teknolojilerini birleştir
 
 ## 🎯 Demo
 
-<img src="docs/images/demo.gif" alt="VoiceBridge Demo" width="800" height="450">
+<img src="docs/images/demo.gif" alt="VoiceBridge Demo" width="300" height="533">
 
 ## ✨ Özellikler
 
