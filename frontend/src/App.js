@@ -78,6 +78,8 @@ function AppContent() {
   // Audio processing and visualization
   const [audioLevel, setAudioLevel] = useState(0);
   const [audioContext, setAudioContext] = useState(null);
+  const [analyser, setAnalyser] = useState(null);
+  const [microphoneStream, setMicrophoneStream] = useState(null);
   
   // UI state management
   const [currentPage, setCurrentPage] = useState('welcome'); // 'welcome' or 'recording'
@@ -210,7 +212,7 @@ function AppContent() {
         clearInterval(timerInterval);
       }
     };
-  }, [isRecording, timerInterval]); // Include timerInterval in dependencies
+  }, [isRecording, timerInterval, analyser, microphoneStream]); // Include all dependencies
 
   const startRecording = async () => {
     // Switch to recording page
