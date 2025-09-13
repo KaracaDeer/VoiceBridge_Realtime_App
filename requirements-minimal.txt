@@ -1,4 +1,7 @@
 # Minimal requirements for Render deployment
+# Python version compatibility
+# Use Python 3.11 for better compatibility
+
 # Core FastAPI dependencies
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
@@ -20,7 +23,7 @@ fastapi-limiter==0.1.6
 # Database connectors
 mysql-connector-python==8.2.0
 pymongo==4.6.0
-sqlalchemy==2.0.23
+sqlalchemy==2.0.25
 
 # Basic dependencies
 requests==2.31.0
