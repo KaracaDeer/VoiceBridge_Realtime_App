@@ -1,0 +1,121 @@
+services:
+  # Backend API Service
+  - type: web
+    name: voicebridge-api
+    env: python
+    plan: starter
+    buildCommand: |
+      pip install -r requirements.txt
+      python -m pip install --upgrade pip
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: API_DEBUG
+        value: false
+      - key: DATABASE_DEMO_MODE
+        value: false
+      - key: MYSQL_PASSWORD
+        fromDatabase:
+          name: voicebridge-mysql
+          property: password
+      - key: MYSQL_CONNECTION_STRING
+        fromDatabase:
+          name: voicebridge-mysql
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: voicebridge-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: voicebridge-redis
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: voicebridge-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: WANDB_API_KEY
+        sync: false
+      - key: MLFLOW_TRACKING_URI
+        value: http://localhost:5000
+      - key: KAFKA_BOOTSTRAP_SERVERS
+        value: localhost:9092
+      - key: KAFKA_AUDIO_TOPIC
+        value: voicebridge-audio
+      - key: KAFKA_TRANSCRIPTION_TOPIC
+        value: voicebridge-transcription
+      - key: GRPC_PORT
+        value: 50051
+      - key: GRPC_MAX_WORKERS
+        value: 10
+      - key: MAX_AUDIO_SIZE_MB
+        value: 10
+      - key: SUPPORTED_AUDIO_FORMATS
+        value: wav,mp3,m4a,flac,webm
+      - key: SAMPLE_RATE
+        value: 16000
+      - key: DEFAULT_LANGUAGE
+        value: en
+      - key: RATE_LIMIT_REQUESTS
+        value: 100
+      - key: RATE_LIMIT_WINDOW
+        value: 60
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 30
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: 7
+
+  # Frontend Service
+  - type: web
+    name: voicebridge-frontend
+    env: static
+    plan: starter
+    buildCommand: |
+      cd frontend
+      npm install
+      npm run build
+    staticPublishPath: ./frontend/build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://voicebridge-api.onrender.com
+      - key: REACT_APP_WS_URL
+        value: wss://voicebridge-api.onrender.com
+
+  # Redis Service (for caching and rate limiting)
+  - type: redis
+    name: voicebridge-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+
+  # MySQL Service
+  - type: pserv
+    name: voicebridge-mysql
+    env: mysql
+    plan: starter
+    envVars:
+      - key: MYSQL_DATABASE
+        value: voicebridge
+      - key: MYSQL_USER
+        value: voicebridge_user
+      - key: MYSQL_PASSWORD
+        generateValue: true
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+
+databases:
+  - name: voicebridge-mysql
+    plan: starter
