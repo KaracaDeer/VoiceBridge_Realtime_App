@@ -17,20 +17,22 @@ from datetime import datetime
 from typing import Dict, Optional
 
 import uvicorn
-from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi_limiter import FastAPILimiter
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from config import settings
-from src.database.mysql_models import User, get_database_manager
+
+# from src.database.mysql_models import User, get_database_manager  # Temporarily disabled
 from src.middleware.security_middleware import setup_security_middleware
 from src.routes.auth_routes import router as auth_router
 from src.routes.monitoring_routes import router as monitoring_router
 from src.routes.realtime_routes import router as realtime_router
 from src.services.audio_processor import AudioProcessor
-from src.services.auth_service import get_current_user
+
+# from src.services.auth_service import get_current_user  # Temporarily disabled
 from src.services.encryption_service import encryption_service
 from src.services.grpc_service import grpc_server
 from src.services.kafka_consumer import KafkaConsumer
@@ -127,11 +129,11 @@ async def startup_event():
     This includes database, rate limiting, monitoring, and real-time services.
     """
     try:
-        # Initialize database
-        db_manager = get_database_manager()
-        db_manager.connect()
-        db_manager.create_tables()
-        logger.info("Database initialized successfully")
+        # Initialize database (temporarily disabled)
+        # db_manager = get_database_manager()
+        # db_manager.connect()
+        # db_manager.create_tables()
+        logger.info("Database initialization skipped (SQLAlchemy disabled)")
 
         # Initialize rate limiting service
         await rate_limiting_service.initialize()
@@ -268,9 +270,7 @@ async def configure_api_key(api_key: str):
 
 
 @app.post("/transcribe")
-async def transcribe_audio(
-    audio_file: UploadFile = File(...), current_user: User = Depends(get_current_user), request: Request = None
-):
+async def transcribe_audio(audio_file: UploadFile = File(...), current_user=None, request: Request = None):
     """
     Transcribe audio file endpoint.
     Accepts audio files and returns transcription results.
@@ -463,7 +463,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str, token: Option
 
 
 # Background task to process audio directly (without Celery)
-async def process_audio_directly(websocket: WebSocket, audio_data: dict, client_id: str, user: User = None):
+async def process_audio_directly(websocket: WebSocket, audio_data: dict, client_id: str, user=None):
     """Process audio directly and send result to WebSocket client."""
     try:
         import time
