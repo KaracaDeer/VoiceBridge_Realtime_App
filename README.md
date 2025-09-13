@@ -13,6 +13,10 @@ It combines deep learning, distributed systems, and big data technologies to del
 
 🇹🇷 [Turkish README](README_TR.md)
 
+## 🚀 Live Demo
+
+https://voicebridge-realtime-app.onrender.com
+
 ## 🎯 Demo
 
 <img src="docs/images/demo.gif" alt="VoiceBridge Demo" width="300" height="533">
