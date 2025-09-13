@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, EmailStr
 
 from config import settings
-from src.database.mysql_models import User
+# from src.database.mysql_models import User  # Temporarily disabled
 from src.services.auth_service import auth_service, create_tokens_for_user, get_current_user
 from src.services.rate_limiting_service import rate_limiting_service
 

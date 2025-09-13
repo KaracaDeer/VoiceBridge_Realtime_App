@@ -27,9 +27,9 @@ from config import settings
 
 # from src.database.mysql_models import User, get_database_manager  # Temporarily disabled
 from src.middleware.security_middleware import setup_security_middleware
-from src.routes.auth_routes import router as auth_router
-from src.routes.monitoring_routes import router as monitoring_router
-from src.routes.realtime_routes import router as realtime_router
+# from src.routes.auth_routes import router as auth_router  # Temporarily disabled
+# from src.routes.monitoring_routes import router as monitoring_router  # Temporarily disabled
+# from src.routes.realtime_routes import router as realtime_router  # Temporarily disabled
 from src.services.audio_processor import AudioProcessor
 
 # from src.services.auth_service import get_current_user  # Temporarily disabled
@@ -67,14 +67,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include authentication routes
-app.include_router(auth_router)
+# Include authentication routes (temporarily disabled)
+# app.include_router(auth_router)
 
-# Include monitoring routes
-app.include_router(monitoring_router)
+# Include monitoring routes (temporarily disabled)
+# app.include_router(monitoring_router)
 
-# Include real-time streaming routes
-app.include_router(realtime_router)
+# Include real-time streaming routes (temporarily disabled)
+# app.include_router(realtime_router)
 
 # Setup security middleware
 setup_security_middleware(app)

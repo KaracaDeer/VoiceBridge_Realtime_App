@@ -7,7 +7,7 @@ import logging
 from typing import Any, Dict, List, Optional
 
 from src.database.mongodb_models import ConversationDocument, get_mongodb_manager
-from src.database.mysql_models import Transcription, TranscriptionFeature, User, get_database_manager
+# from src.database.mysql_models import Transcription, TranscriptionFeature, User, get_database_manager  # Temporarily disabled
 
 logger = logging.getLogger(__name__)
 

@@ -10,7 +10,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse, Response
 
-from src.database.mysql_models import User
+# from src.database.mysql_models import User  # Temporarily disabled
 from src.services.auth_service import get_current_user
 from src.services.mlflow_service import mlflow_service
 from src.services.model_monitoring_service import model_monitoring_service

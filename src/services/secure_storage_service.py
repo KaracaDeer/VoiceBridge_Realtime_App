@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 from typing import Any, Dict, Tuple
 
-from src.database.mysql_models import get_database_manager
+# from src.database.mysql_models import get_database_manager  # Temporarily disabled
 from src.services.encryption_service import encryption_service
 
 logger = logging.getLogger(__name__)

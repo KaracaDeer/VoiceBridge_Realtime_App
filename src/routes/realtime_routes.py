@@ -20,7 +20,7 @@ from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, WebSocket, status
 
-from src.database.mysql_models import User
+# from src.database.mysql_models import User  # Temporarily disabled
 from src.services.auth_service import get_current_user
 from src.services.grpc_service import grpc_server
 from src.services.kafka_stream_service import kafka_stream_service
