@@ -4,6 +4,7 @@ uvicorn[standard]==0.24.0
 pydantic>=2.6.0
 pydantic-settings==2.1.0
 python-multipart==0.0.6
+setuptools>=65.0.0
 
 # Async and WebSocket support
 websockets==12.0
@@ -20,11 +21,11 @@ avro-python3==1.10.2
 
 # Audio processing and ML
 numpy==1.24.3
-librosa==0.10.1
+# librosa==0.10.1  # Commented out due to build issues
 speechrecognition==3.10.0
 # pyaudio==0.2.11  # Commented out due to build issues on Windows
-torch==2.1.1
-transformers==4.35.2
+# torch==2.1.1  # Commented out due to build issues
+# transformers==4.35.2  # Commented out due to build issues
 
 # Environment and configuration
 python-dotenv==1.0.0
@@ -65,10 +66,6 @@ grpcio==1.59.3
 grpcio-tools==1.59.3
 grpcio-status==1.59.3
 protobuf==4.25.1
-asyncio-mqtt==0.16.1
-aiokafka==0.10.0
-confluent-kafka==2.3.0
-avro-python3==1.10.2
 
 # Database connectors
 mysql-connector-python==8.2.0
