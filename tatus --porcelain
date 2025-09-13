@@ -1,0 +1,151 @@
+[1mdiff --git a/README.md b/README.md[m
+[1mindex a4d04bf..84f552b 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -1,15 +1,14 @@[m
+[31m-# VoiceBridge - Real-Time Speech-to-Text & Big Data Processing for Accessibility[m
+[32m+[m[32m# VoiceBridge - Real-Time Speech-to-Text for Accessibility[m
+ [m
+ [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/KaracaDeer/VoiceBridge_Realtime_App)[m
+[31m-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/KaracaDeer/VoiceBridge_Realtime_App)[m
+[31m-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)[m
+ [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)[m
+ [![Node.js](https://img.shields.io/badge/node.js-18+-green.svg)](https://nodejs.org)[m
+[31m-[![React](https://img.shields.io/badge/react-18.2.0-blue.svg)](https://reactjs.org)[m
+[32m+[m[32m[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com)[m
+[32m+[m[32m[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)[m
+ [![LinkedIn](https://img.shields.io/badge/LinkedIn-Fatma%20Karaca%20Erdogan-blue.svg)](https://www.linkedin.com/in/fatma-karaca-erdogan-32201a378/)[m
+ [m
+[31m-VoiceBridge is a real-time speech-to-text application designed to bridge communication gaps for people with hearing impairments.[m
+[31m-It combines deep learning, distributed systems, and big data technologies to deliver accurate, scalable, and accessible transcription services.[m
+[32m+[m
+[32m+[m[32m**VoiceBridge enables hearing-impaired users to follow real-time conversations in meetings, classrooms, or social environments with sub-second transcription latency.** Built with modern microservices architecture, it combines AI/ML models, WebSocket streaming, and accessibility-first design to deliver accurate, scalable speech-to-text services.[m
+ [m
+ 🇹🇷 [Turkish README](README_TR.md)[m
+ [m
+[36m@@ -17,511 +16,190 @@[m [m## 🎯 Demo[m
+ [m
+ <img src="docs/images/demo.gif" alt="VoiceBridge Demo" width="300" height="533">[m
+ [m
+[31m-## ✨ Features[m
+[31m-[m
+[31m-- 🎤 **Real-time Voice Processing** - Advanced speech recognition and transcription[m
+[31m-- 🤖 **AI-Powered Transcription** - Multiple ML models including Whisper, Wav2Vec2, and OpenAI[m
+[31m-- 🧠 **Deep Learning Integration** - TensorFlow and PyTorch model support[m
+[31m-- 📊 **Machine Learning Pipeline** - scikit-learn, NumPy, and Pandas integration[m
+[31m-- 🔄 **Real-time Streaming** - WebSocket-based live audio streaming[m
+[31m-- 📱 **Responsive Design** - Modern, minimalist interface that works on all devices[m
+[31m-- 🚀 **Microservices Architecture** - Scalable distributed system design[m
+[31m-- 📚 **ML Model Management** - MLflow integration for model tracking and deployment[m
+[31m-- 🔬 **Experiment Tracking** - Weights & Biases for ML experiment visualization[m
+[31m-- 🔐 **User Authentication** - Secure user management and session tracking[m
+[31m-- 🔑 **JWT Authentication** - Secure token-based authentication system[m
+[31m-- 🌐 **OAuth 2.0 Integration** - Social login with Google, GitHub, and Microsoft[m
+[31m-- 📊 **Real-time Monitoring** - Prometheus metrics and Grafana dashboards[m
+[31m-- 🔄 **Message Queues** - Kafka and Redis for high-performance messaging[m
+[31m-- 🔍 **Advanced Analytics** - Spark-based data processing and analytics[m
+[31m-- 🛡️ **Security Features** - AES-256 encryption, rate limiting, and secure storage[m
+[31m-- ⚡ **Task Processing** - Celery workers for background job processing[m
+[31m-- 🌐 **gRPC Services** - High-performance inter-service communication[m
+[31m-- 📈 **Performance Monitoring** - Real-time system metrics and health checks[m
+[31m-- 🔧 **CI/CD Pipeline** - Automated testing, linting, and deployment[m
+[31m-[m
+[31m-## 🔍 Detailed Features[m
+[31m-[m
+[31m-### Real-time Voice Processing[m
+[31m-**Advanced Speech Recognition**[m
+[31m-- Multiple ML models (Whisper, Wav2Vec2, OpenAI)[m
+[31m-- Real-time audio streaming with WebSocket[m
+[31m-- Low-latency transcription processing[m
+[31m-- Multi-language support (Whisper model)[m
+[31m-[m
+[31m-**Audio Preprocessing**[m
+[31m-- Noise reduction and audio enhancement[m
+[31m-- Format conversion and normalization[m
+[31m-- Real-time audio quality monitoring[m
+[31m-[m
+[31m-### ML Model Management[m
+[31m-**MLflow Integration**[m
+[31m-- Model versioning and tracking[m
+[31m-- Experiment management[m
+[31m-- Model deployment and serving[m
+[31m-[m
+[31m-**Performance Monitoring**[m
+[31m-- Real-time model performance metrics[m
+[31m-- Accuracy tracking and reporting[m
+[31m-- A/B testing for model comparison[m
+[31m-[m
+[31m-### Microservices Architecture[m
+[31m-**Service Communication**[m
+[31m-- gRPC for high-performance inter-service communication[m
+[31m-- RESTful APIs for external integrations[m
+[31m-- Message queues for asynchronous processing[m
+[31m-[m
+[31m-**Scalable Infrastructure**[m
+[31m-- Docker containerization[m
+[31m-- Kubernetes deployment ready[m
+[31m-- Load balancing and auto-scaling[m
+[31m-[m
+[31m-### Authentication and User Management[m
+[31m-**Local Registration/Login**[m
+[31m-- Create accounts with username, email, and password[m
+[31m-- Secure password hashing with bcrypt[m
+[31m-- JWT token-based authentication[m
+[31m-[m
+[31m-**OAuth 2.0 Social Login**[m
+[31m-- Google, GitHub, and Microsoft integration[m
+[31m-- Secure OAuth flow with state validation[m
+[31m-- Automatic account creation for OAuth users[m
+[31m-[m
+[31m-**User Profile Management**[m
+[31m-- View and update profile information[m
+[31m-- Track login history and authentication provider[m
+[31m-- Secure token refresh mechanism[m
+[31m-[m
+[31m-## 🏗️ Technology Stack[m
+[31m-[m
+[31m-### Frontend[m
+[31m-- React 18 + JavaScript - Modern UI framework[m
+[31m-- Vite - Lightning-fast build tool[m
+[31m-- CSS3 - Modern styling and animations[m
+[31m-- WebSocket Client - Real-time communication[m
+[31m-- Audio Processing - Web Audio API integration[m
+[31m-[m
+[31m-### Backend[m
+[31m-- FastAPI - High-performance Python web framework[m
+[31m-- SQLAlchemy - SQL toolkit and ORM[m
+[31m-- MongoDB - NoSQL database for metadata[m
+[31m-- MySQL - Relational database for user data[m
+[31m-- ChromaDB - AI-native vector database[m
+[31m-- LangChain - LLM application framework[m
+[31m-- OpenAI Integration - GPT-4, Whisper, and Embeddings[m
+[31m-- JWT & OAuth2 - Authentication and authorization services[m
+[31m-[m
+[31m-### AI & ML[m
+[31m-- **Multiple ML Models** - Whisper, Wav2Vec2, OpenAI[m
+[31m-- **Deep Learning Frameworks** - TensorFlow, PyTorch[m
+[31m-- **Machine Learning Libraries** - scikit-learn, NumPy, Pandas[m
+[31m-- **RAG Pipeline** - Retrieval-Augmented Generation[m
+[31m-- **Vector Embeddings** - Semantic similarity search[m
+[31m-- **Natural Language Processing** - Advanced text understanding[m
+[31m-- **Speech Recognition** - Speech-to-text conversion[m
+[31m-- **MLflow** - Model tracking and deployment[m
+[31m-- **Weights & Biases** - Experiment tracking and visualization[m
+[31m-[m
+[31m-### Infrastructure[m
+[31m-- **Docker** - Containerization and orchestration[m
+[31m-- **Kubernetes** - Production deployment and scaling[m
+[31m-- **Kafka** - Message streaming and event processing[m
+[31m-- **Redis** - Caching, session storage, and Celery broker[m
+[31m-- **Prometheus** - Metrics collection and alerting[m
+[31m-- **Grafana** - Monitoring dashboards and visualization[m
+[31m-- **gRPC** - High-performance inter-service communication[m
+[31m-- **Celery** - Distributed task queue and background processing[m
+[31m-- **Flower** - Celery monitoring and task management[m
+[31m-[m
+[31m-## 📁 Project Structure[m
+[31m-[m
+[31m-```[m
+[31m-VoiceBridge_Realtime_App/[m
+[31m-├── 📄 README.md, README_TR.md   # Project documentation[m
+[31m-├── 📄 LICENSE, SECURITY.md      # Legal and s

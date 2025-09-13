@@ -163,7 +163,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# VoiceBridge specific
+# VoiceBridge specific files
+# ==========================
+
 # Environment files
 .env
 .env.local
@@ -171,7 +173,7 @@ dmypy.json
 .env.test
 .env.production
 
-# Logs
+# Logs and runtime data
 logs/
 *.log
 log/
@@ -182,7 +184,7 @@ log/
 *.sqlite3
 mlflow.db
 
-# Audio files (test data)
+# Audio files (test data only)
 test_audio/
 sample_audio/
 *.wav
@@ -193,7 +195,7 @@ sample_audio/
 *.ogg
 *.aac
 
-# Model files
+# Model files and artifacts
 models/
 *.model
 *.pkl
@@ -201,19 +203,19 @@ models/
 *.h5
 *.pb
 
-# MLFlow artifacts
+# MLFlow artifacts and runs
 mlflow_artifacts/
 mlruns/
 mlflow_data/
 
-# Storage directories
+# Storage and uploads
 storage/
 uploads/
 downloads/
 temp/
 tmp/
 
-# Data directories (keep only example/dummy data)
+# Data directories (keep only example data)
 data/
 !data/example/
 !data/sample/
@@ -224,14 +226,14 @@ backups/
 *.backup
 *.bak
 
-# IDE files
+# IDE and editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS files
+# OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -240,19 +242,18 @@ backups/
 ehthumbs.db
 Thumbs.db
 
-# Docker
-.dockerignore
+# Docker overrides
 docker-compose.override.yml
 
-# Kubernetes
+# Kubernetes configs
 *.kubeconfig
 
-# Terraform
+# Terraform state
 *.tfstate
 *.tfstate.*
 .terraform/
 
-# Node.js (for frontend)
+# Node.js dependencies and build
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -260,16 +261,16 @@ yarn-error.log*
 package-lock.json
 yarn.lock
 
-# Frontend build
+# Frontend build outputs
 frontend/build/
 frontend/dist/
 
-# Test reports
+# Test reports and coverage
 test_reports/
 coverage/
 .pytest_cache/
 
-# Jupyter notebooks checkpoints
+# Jupyter checkpoints
 .ipynb_checkpoints/
 
 # Credentials and secrets
@@ -281,13 +282,13 @@ secrets/
 *.p12
 *.pfx
 
-# Secure storage (keep only example configs)
+# Secure storage (keep only examples)
 secure_storage/
 !secure_storage/example/
 !secure_storage/sample/
 !secure_storage/config.example/
 
-# Local configuration overrides
+# Local configuration
 config.local.py
 settings.local.py
 
@@ -299,54 +300,29 @@ settings.local.py
 .cache/
 cache/
 
-# Redis dump files
+# Redis dumps
 dump.rdb
 
 # Kafka logs
 kafka-logs/
 
-# Prometheus data
-prometheus_data/
-
-# Grafana data
-grafana_data/
-
-# Postman test reports
-postman/test_reports/
-
-# Local development files
-local/
-dev/
-development/
-
-# Production deployment files
-deployment/local/
-deployment/dev/
-
 # Monitoring data
+prometheus_data/
+grafana_data/
 monitoring_data/
 
 # Analytics data
 analytics_data/
 
-# Custom ignore patterns
-# Add any project-specific ignore patterns here
-
 # Weights & Biases runs
 wandb/
 
-# Test images and temporary files
+# Test output files
 monitoring_test_metrics.png
 
-# Simple main files (optional - can be kept for examples)
-# simple_main.py
-# simple_main_updated.py
-# simple_main_with_db.py
-# simple_main_ml.py
-
-# Generated protobuf files (optional - can be kept for convenience)
-# proto/voicebridge_pb2.py
-# proto/voicebridge_pb2_grpc.py
+# Security reports
+bandit-report.json
+safety-report.json
 
 # pytype static type analyzer
 .pytype/
@@ -380,12 +356,9 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# Cursor
-#  Cursor is an AI-powered code editor. `.cursorignore` specifies files/directories to
-#  exclude from AI features like autocomplete and code analysis. Recommended for sensitive data
-#  refer to https://docs.cursor.com/context/ignore-files
-.cursorignore
-.cursorindexingignore
+# AI-powered code editor ignore files
+.ignore
+.indexingignore
 
 # Marimo
 marimo/_static/

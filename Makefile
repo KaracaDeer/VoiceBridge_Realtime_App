@@ -1,119 +1,300 @@
-# VoiceBridge Makefile
-# Easy commands for local development and CI
+# VoiceBridge API Makefile
+# Provides convenient commands for development, testing, and deployment
 
-.PHONY: help install test lint format clean ci docker-build docker-test
+.PHONY: help install dev build test lint format clean docker-up docker-down health monitor quick-start
 
 # Default target
-help:
-	@echo "VoiceBridge Development Commands"
-	@echo "================================"
-	@echo ""
-	@echo "Setup:"
-	@echo "  install     Install all dependencies"
-	@echo "  install-ci  Install CI dependencies only"
-	@echo ""
-	@echo "Code Quality:"
-	@echo "  lint        Run linting checks"
-	@echo "  format      Format code with black and isort"
-	@echo "  type-check  Run type checking with mypy"
-	@echo "  security    Run security checks"
-	@echo ""
-	@echo "Testing:"
-	@echo "  test        Run all tests"
-	@echo "  test-fast   Run tests with minimal output"
-	@echo "  test-ci     Run tests as in CI"
-	@echo ""
-	@echo "CI/CD:"
-	@echo "  ci          Run full local CI pipeline"
-	@echo "  ci-quick    Run quick CI checks"
-	@echo "  pre-commit  Install pre-commit hooks"
-	@echo ""
-	@echo "Docker:"
-	@echo "  docker-build Build Docker image"
-	@echo "  docker-test  Test Docker image"
-	@echo ""
-	@echo "Utilities:"
-	@echo "  clean       Clean up temporary files"
-	@echo "  setup       Complete project setup"
+help: ## Show this help message
+	@echo "VoiceBridge API - Available Commands:"
+	@echo "====================================="
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-# Setup commands
-install:
+# Installation
+install: ## Install all dependencies (Python + Node.js)
+	@echo "Installing Python dependencies..."
+	pip install -r requirements.txt
+	@echo "Installing Node.js dependencies..."
+	cd frontend && npm install
+	@echo "Installing pre-commit hooks..."
+	pre-commit install
+	@echo "Installation completed!"
+
+install-python: ## Install Python dependencies only
 	pip install -r requirements.txt
 
-install-ci:
-	pip install -r requirements-ci.txt
+install-frontend: ## Install frontend dependencies only
+	cd frontend && npm install
 
-setup: install-ci
-	python scripts/test_ci_setup.py
-	@echo "✅ Setup complete! Run 'make ci' to test everything."
+# Development
+dev: ## Start development servers (backend + frontend)
+	@echo "Starting development servers..."
+	@echo "Backend: http://localhost:8000"
+	@echo "Frontend: http://localhost:3000"
+	@echo "API Docs: http://localhost:8000/docs"
+	@echo "Press Ctrl+C to stop"
+	@trap 'kill %1; kill %2' INT; \
+	uvicorn main:app --host 0.0.0.0 --port 8000 --reload & \
+	cd frontend && npm start & \
+	wait
 
-# Code quality commands
-lint:
-	flake8 src tests --count --select=E9,F63,F7,F82 --show-source --statistics
-	flake8 src tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+backend: ## Start backend server only
+	@echo "Starting backend server..."
+	@echo "Backend: http://localhost:8000"
+	@echo "API Docs: http://localhost:8000/docs"
+	uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
-format:
-	black src tests
-	isort src tests
+frontend: ## Start frontend server only
+	@echo "Starting frontend server..."
+	@echo "Frontend: http://localhost:3000"
+	cd frontend && npm start
 
-format-check:
-	black --check src tests
-	isort --check-only src tests
+# Building
+build: ## Build production version
+	@echo "Building frontend..."
+	cd frontend && npm run build
+	@echo "Build completed!"
 
-type-check:
-	mypy src --ignore-missing-imports --no-strict-optional
+build-frontend: ## Build frontend only
+	cd frontend && npm run build
 
-security:
-	bandit -r src/ -f json || true
-	safety check --json || true
+# Testing
+test: ## Run all tests
+	@echo "Running Python tests..."
+	pytest tests/ -v --tb=short
+	@echo "Running frontend tests..."
+	cd frontend && npm test -- --coverage --watchAll=false
 
-# Testing commands
-test:
-	pytest tests/ -v
+test-python: ## Run Python tests only
+	pytest tests/ -v --tb=short
 
-test-fast:
-	pytest tests/ --maxfail=1 --disable-warnings -q
+test-frontend: ## Run frontend tests only
+	cd frontend && npm test -- --coverage --watchAll=false
 
-test-ci:
-	pytest tests/test_api.py tests/test_simple_startup.py --maxfail=1 --disable-warnings -v --tb=short
+test-integration: ## Run integration tests
+	pytest tests/test_integration.py -v --tb=short
 
-# CI/CD commands
-ci: install-ci
-	python scripts/local_ci.py
+test-websocket: ## Run WebSocket tests
+	pytest tests/test_websocket_stream.py -v --tb=short
 
-ci-quick: format-check lint type-check test-fast
+test-ml: ## Run ML model tests
+	pytest tests/test_ml_models.py -v --tb=short
 
-pre-commit:
-	pip install pre-commit
-	pre-commit install
+# Code Quality
+lint: ## Run linting for all code
+	@echo "Linting Python code..."
+	flake8 src/ tests/ --max-line-length=88 --extend-ignore=E203,W503,E501
+	@echo "Linting frontend code..."
+	cd frontend && npm run lint
+
+lint-python: ## Run Python linting only
+	flake8 src/ tests/ --max-line-length=88 --extend-ignore=E203,W503,E501
+
+lint-frontend: ## Run frontend linting only
+	cd frontend && npm run lint
+
+lint-fix: ## Fix linting issues automatically
+	@echo "Fixing Python code formatting..."
+	black src/ tests/ --line-length=88
+	isort src/ tests/ --profile=black --line-length=88
+	@echo "Fixing frontend code formatting..."
+	cd frontend && npm run lint:fix
+
+format: ## Format all code
+	@echo "Formatting Python code..."
+	black src/ tests/ --line-length=88
+	isort src/ tests/ --profile=black --line-length=88
+	@echo "Formatting frontend code..."
+	cd frontend && npm run format
+
+format-python: ## Format Python code only
+	black src/ tests/ --line-length=88
+	isort src/ tests/ --profile=black --line-length=88
+
+format-frontend: ## Format frontend code only
+	cd frontend && npm run format
+
+# Type Checking
+type-check: ## Run type checking
+	@echo "Type checking Python code..."
+	mypy src/ --ignore-missing-imports
+	@echo "Type checking frontend code..."
+	cd frontend && npm run type-check
+
+type-check-python: ## Run Python type checking only
+	mypy src/ --ignore-missing-imports
+
+type-check-frontend: ## Run frontend type checking only
+	cd frontend && npm run type-check
+
+# Security
+security: ## Run security checks
+	@echo "Running security checks..."
+	bandit -r src/ -f json -o bandit-report.json
+	safety check --json --output safety-report.json
+	@echo "Security reports generated: bandit-report.json, safety-report.json"
+
+# Pre-commit
+pre-commit: ## Run pre-commit hooks on all files
 	pre-commit run --all-files
 
-# Docker commands
-docker-build:
-	docker build -t voicebridge:test -f docker/Dockerfile .
+pre-commit-install: ## Install pre-commit hooks
+	pre-commit install
 
-docker-test: docker-build
-	docker run --rm voicebridge:test python --version
+# Docker
+docker-up: ## Start Docker services
+	@echo "Starting Docker services..."
+	docker-compose up -d
+	@echo "Services started! Check status with: make docker-status"
 
-# Utility commands
-clean:
-	find . -type f -name "*.pyc" -delete
-	find . -type d -name "__pycache__" -delete
-	find . -type d -name "*.egg-info" -exec rm -rf {} +
-	rm -rf .pytest_cache/
-	rm -rf .mypy_cache/
-	rm -rf .coverage
-	rm -rf htmlcov/
+docker-down: ## Stop Docker services
+	@echo "Stopping Docker services..."
+	docker-compose down
 
-# Development workflow
-dev-setup: install-ci pre-commit
-	@echo "✅ Development environment ready!"
-	@echo "💡 Run 'make ci' before pushing to GitHub"
+docker-build: ## Build Docker images
+	@echo "Building Docker images..."
+	docker-compose build
 
-# Quick development cycle
-dev: format lint test-fast
-	@echo "✅ Quick development checks passed!"
+docker-logs: ## Show Docker logs
+	docker-compose logs -f
 
-# Full development cycle
-dev-full: format lint type-check test security
-	@echo "✅ Full development checks passed!"
+docker-status: ## Show Docker service status
+	docker-compose ps
+
+docker-prod: ## Start production Docker services
+	@echo "Starting production Docker services..."
+	docker-compose -f docker-compose.production.yml up -d
+
+docker-monitoring: ## Start monitoring Docker services
+	@echo "Starting monitoring services..."
+	docker-compose -f docker-compose.monitoring.yml up -d
+
+# Monitoring
+health: ## Check service health
+	@echo "Checking service health..."
+	@curl -s http://localhost:8000/health | python -m json.tool || echo "Backend not running"
+	@curl -s http://localhost:3000 | head -1 || echo "Frontend not running"
+
+monitor: ## Start performance monitoring
+	@echo "Starting performance monitoring..."
+	@echo "Prometheus: http://localhost:9090"
+	@echo "Grafana: http://localhost:3001"
+	@echo "MLflow: http://localhost:5000"
+	@echo "Flower (Celery): http://localhost:5555"
+	docker-compose -f docker-compose.monitoring.yml up -d
+
+# Database
+db-setup: ## Setup databases
+	@echo "Setting up databases..."
+	python scripts/setup_mysql.py
+	python scripts/setup_redis.py
+
+# Services
+start-kafka: ## Start Kafka services
+	@echo "Starting Kafka..."
+	python scripts/setup_kafka.py
+
+start-mlflow: ## Start MLflow tracking
+	@echo "Starting MLflow..."
+	python scripts/start_mlflow.py
+
+# CI/CD
+ci: ## Run CI/CD pipeline locally
+	@echo "Running CI/CD pipeline..."
+	python scripts/local_ci.py
+
+ci-test: ## Run CI tests
+	@echo "Running CI tests..."
+	python scripts/test_ci_setup.py
+
+# Cleanup
+clean: ## Clean cache and build files
+	@echo "Cleaning up..."
+	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	find . -type f -name "*.pyo" -delete 2>/dev/null || true
+	find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
+	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
+	find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
+	find . -type d -name ".coverage" -exec rm -rf {} + 2>/dev/null || true
+	cd frontend && rm -rf build/ node_modules/.cache/ 2>/dev/null || true
+	@echo "Cleanup completed!"
+
+clean-docker: ## Clean Docker containers and images
+	@echo "Cleaning Docker..."
+	docker-compose down -v
+	docker system prune -f
+	docker volume prune -f
+
+# Quick Start
+quick-start: install ## Complete setup and start development
+	@echo "Quick start: Setting up VoiceBridge API..."
+	@echo "1. Installing dependencies..."
+	@echo "2. Starting services..."
+	@echo "3. Opening application..."
+	@echo ""
+	@echo "Backend: http://localhost:8000"
+	@echo "Frontend: http://localhost:3000"
+	@echo "API Docs: http://localhost:8000/docs"
+	@echo ""
+	@echo "Press Ctrl+C to stop all services"
+	@trap 'kill %1; kill %2' INT; \
+	uvicorn main:app --host 0.0.0.0 --port 8000 --reload & \
+	cd frontend && npm start & \
+	wait
+
+# Documentation
+docs: ## Generate documentation
+	@echo "Generating documentation..."
+	@echo "API documentation available at: http://localhost:8000/docs"
+	@echo "OpenAPI schema available at: http://localhost:8000/openapi.json"
+
+# Release
+release: ## Create a new release
+	@echo "Creating release..."
+	python scripts/create_release.py
+
+# Development helpers
+logs: ## Show application logs
+	@echo "Showing application logs..."
+	@tail -f logs/*.log 2>/dev/null || echo "No log files found"
+
+check-deps: ## Check for outdated dependencies
+	@echo "Checking Python dependencies..."
+	pip list --outdated
+	@echo "Checking frontend dependencies..."
+	cd frontend && npm outdated
+
+update-deps: ## Update dependencies
+	@echo "Updating Python dependencies..."
+	pip install --upgrade -r requirements.txt
+	@echo "Updating frontend dependencies..."
+	cd frontend && npm update
+
+# Environment setup
+env-setup: ## Setup environment variables
+	@echo "Setting up environment..."
+	@if [ ! -f .env ]; then \
+		echo "Creating .env file from template..."; \
+		cp .env.example .env 2>/dev/null || echo "No .env.example found"; \
+		echo "Please edit .env file with your configuration"; \
+	else \
+		echo ".env file already exists"; \
+	fi
+
+# Performance testing
+perf-test: ## Run performance tests
+	@echo "Running performance tests..."
+	python scripts/performance_monitor.py
+
+# Backup
+backup: ## Backup important data
+	@echo "Creating backup..."
+	@mkdir -p backups
+	@tar -czf backups/voicebridge-backup-$(shell date +%Y%m%d-%H%M%S).tar.gz \
+		--exclude=node_modules \
+		--exclude=__pycache__ \
+		--exclude=.git \
+		--exclude=logs \
+		--exclude=backups \
+		.
+	@echo "Backup created in backups/ directory"

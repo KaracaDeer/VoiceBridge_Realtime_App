@@ -12,6 +12,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 from config import settings
+
 # from src.database.mysql_models import User  # Temporarily disabled, get_database_manager
 
 logger = logging.getLogger(__name__)
