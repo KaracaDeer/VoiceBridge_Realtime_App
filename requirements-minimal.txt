@@ -43,8 +43,8 @@ aiokafka==0.10.0
 confluent-kafka==2.3.0
 avro-python3==1.10.2
 
-# Kafka dependencies
-kafka==1.3.5
+# Kafka dependencies (using kafka-python instead of kafka)
+# kafka==1.3.5  # Removed due to Python 3.11 compatibility issues
 
 # gRPC packages
 grpcio==1.59.3
