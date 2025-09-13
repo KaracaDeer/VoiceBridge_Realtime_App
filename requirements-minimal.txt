@@ -25,6 +25,11 @@ mysql-connector-python==8.2.0
 pymongo==4.6.0
 # sqlalchemy==2.0.25  # Temporarily disabled due to Python 3.13 compatibility
 
+# Audio processing
+numpy==1.24.3
+librosa==0.10.1
+speechrecognition==3.10.0
+
 # Basic dependencies
 requests==2.31.0
 websockets==12.0
