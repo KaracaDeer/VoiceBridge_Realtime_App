@@ -18,7 +18,7 @@ https://voicebridge-realtime-app.onrender.com
 
 ## 🎯 Demo
 
-<img src="docs/images/demo.gif" alt="VoiceBridge Demo" width="300" height="533">
+![VoiceBridge Demo](docs/images/demo.gif)
 
 ## 🚀 Quick Start
 
@@ -45,7 +45,7 @@ docker-compose up -d
 
 ## 🏗️ Architecture
 
-<img src="docs/images/architecture.png" alt="VoiceBridge Architecture" width="600">
+![VoiceBridge Architecture](docs/images/architecture.png)
 
 ```
 User → Frontend → WebSocket → Backend → ML Models → Text Output
