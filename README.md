@@ -191,7 +191,7 @@ MLFLOW_TRACKING_URI=http://localhost:5000
 ### 💬 Support
 - **🐛 Issues**: [GitHub Issues](https://github.com/KaracaDeer/VoiceBridge_Realtime_App/issues)
 - **💭 Discussions**: [GitHub Discussions](https://github.com/KaracaDeer/VoiceBridge_Realtime_App/discussions)
-- **💼 LinkedIn**: [Fatma Karaca Erdogan](https://www.linkedin.com/in/fatma-karaca-erdogan-32201a378/)
+- **💼 LinkedIn**: [Fatma Karaca Erdogan](https://www.linkedin.com/in/fatma-erdogan-32201a378/)
 - **📧 Email**: fatmakaracaerdogan@gmail.com
 
 ## 📝 License
